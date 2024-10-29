@@ -44,8 +44,7 @@ public class ApiSecurityApplication {
 
 	@Autowired
 	PermissionServiceImp permissionServiceImp;
-
-	// Bean que se ejecuta al arranque de la aplicación
+	
 	@Bean
 	CommandLineRunner init() {
 
