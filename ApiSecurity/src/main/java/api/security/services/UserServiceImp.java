@@ -25,6 +25,11 @@ public class UserServiceImp implements IDAO<UserEntity> {
 		return userRepository.findById(id);
 	}
 	
+	public Optional<UserEntity> readByUsername(String username) {
+		
+		return userRepository.findByUsername(username);
+	}
+	
 	@Override
 	public List<UserEntity> readAll() {
 		
@@ -38,15 +43,14 @@ public class UserServiceImp implements IDAO<UserEntity> {
 	}
 
 	@Override
-	public void deleteById(Long id) {
-		
+	public void deleteById(Long id) {		
 
-		
+		userRepository.deleteById(id);
 	}
 
 	@Override
 	public Long getLastId() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return userRepository.getLastId();
 	}
 }

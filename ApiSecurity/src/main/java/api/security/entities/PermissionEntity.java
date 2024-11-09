@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "permissions")
@@ -19,7 +20,8 @@ public class PermissionEntity {
     private Long id;
     
     @Column(name = "permission_name")
-    @Enumerated(EnumType.STRING)    
+    @Enumerated(EnumType.STRING)  
+    @NotNull(message = "el campo no debe ser null")
     private PermissionEnum permissionEnum;
 
 	public PermissionEntity() {
@@ -30,8 +32,8 @@ public class PermissionEntity {
 	}
 
 	public PermissionEntity(Long id, PermissionEnum permissionEnum) {
+		this(permissionEnum);
 		this.id = id;
-		this.permissionEnum = permissionEnum;
 	}
 
 	public Long getId() {

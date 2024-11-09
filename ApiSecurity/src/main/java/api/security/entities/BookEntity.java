@@ -1,8 +1,6 @@
 package api.security.entities;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,10 +8,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "books")
@@ -24,9 +24,12 @@ public class BookEntity {
 	private Long id;	
 	
 	@Column(nullable = false)	
+	@NotBlank(message = "el campo no debe ser null o solo contener espacios en blanco")
+	@Size(min = 3, max = 20, message = "ingrese 3 caracteres como mínimo y 20 como máximo")
 	private String title;
 	
 	@Column(nullable = false, unique = true)
+	@NotBlank(message = "el campo no debe ser null o solo contener espacios en blanco")
 	private String isbm;
 
 	@ManyToOne
@@ -42,6 +45,7 @@ public class BookEntity {
 	private AuthorEntity author;
 	
 	@Column(nullable = false)
+	@Past(message = "la fecha debe ser anterior a la fecha actual")
 	private Date publicationYear;
 	
 	@Column(nullable = false)	

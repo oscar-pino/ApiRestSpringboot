@@ -6,6 +6,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "categories")
@@ -16,17 +18,28 @@ public class CategoryEntity {
 	private Long id;
 	
 	@Column(unique=true)
+	@NotBlank(message = "el campo no debe ser null o solo contener espacios en blanco")
+	@Size(max = 20, message = "ingrese 20 caracteres como máximo")
 	private String name;	
 	
 	@Column(unique=true)
+	@NotBlank(message = "el campo no debe ser null o solo contener espacios en blanco")
+	@Size(max = 100, message = "ingrese 100 caracteres como máximo")
 	private String description;
 
 	public CategoryEntity() {
 	}
-
+	
 	public CategoryEntity(String name, String description) {
+	
 		this.name = name;
 		this.description = description;
+	}
+
+	public CategoryEntity(Long id, String name, String description) {
+		
+		this(name, description);
+		this.id = id;
 	}
 
 	public String getName() {

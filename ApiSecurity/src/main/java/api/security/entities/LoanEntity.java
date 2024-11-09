@@ -1,10 +1,8 @@
 package api.security.entities;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -16,6 +14,10 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "loans")
@@ -35,10 +37,14 @@ public class LoanEntity {
 	@JoinColumn(name = "customer_id", nullable = false)
 	private CustomerEntity customer;
 	
+	@Past(message = "la fecha debe ser anterior a la fecha actual")
 	private LocalDate loanDate;
 	
+	@Future(message = "la fecha debe ser posterior a la fecha actual")
 	private LocalDate deliverDate;
 	
+	@NotBlank(message = "el campo no debe ser null o solo contener espacios en blanco")
+	@Size(max = 20, message = "ingrese 20 caracteres como máximo")
 	private String status;	
 	
 	@OneToOne(mappedBy = "loan")
@@ -54,8 +60,6 @@ public class LoanEntity {
 		this.deliverDate = deliverDate;
 		this.status = status;
 	}
-
-
 
 	public LocalDate getLoanDate() {
 		return loanDate;

@@ -16,6 +16,6 @@ public interface INationalityRepository extends CrudRepository<NationalityEntity
 
 	Optional<NationalityEntity> findById(Long id);
 	
-	@Query(value = "SELECT MAx(id) FROM nationalities", nativeQuery = true)
+	@Query(value = "SELECT MAX(id) FROM nationalities", nativeQuery = true)
 	Long getLastId();
 }

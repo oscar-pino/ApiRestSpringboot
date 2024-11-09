@@ -16,6 +16,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "roles")
@@ -27,6 +28,7 @@ public class RoleEntity {
 
     @Column(name = "role_name")
     @Enumerated(EnumType.STRING)
+    @NotNull(message = "el campo no debe ser null")
     private RoleEnum roleEnum;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -40,21 +42,9 @@ public class RoleEntity {
 	public RoleEntity(RoleEnum roleEnum) {
 		this.roleEnum = roleEnum;
 	}
-	
-	public RoleEntity(Long id, RoleEnum roleEnum) {
-		this.id = id;
-		this.roleEnum = roleEnum;
-	}
 
 	public RoleEntity(RoleEnum roleEnum, List<PermissionEntity> permissionList) {
-		this.roleEnum = roleEnum;
-		this.permissionList = permissionList;
-	}
-
-	
-	public RoleEntity(Long id, RoleEnum roleEnum, List<PermissionEntity> permissionList) {
-		this.id = id;
-		this.roleEnum = roleEnum;
+		this(roleEnum);
 		this.permissionList = permissionList;
 	}
 

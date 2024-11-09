@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import api.security.dto.NationalityDTO;
 import api.security.entities.NationalityEntity;
 import api.security.services.NationalityServiceImp;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/nationalities")
@@ -27,9 +29,13 @@ public class NationalityController {
 	private NationalityServiceImp nationalityServiceImp;
 
 	@PostMapping("/create")
-	public ResponseEntity<?> create(@RequestBody NationalityDTO nationalityDTO) {
+	public ResponseEntity<?> create(@Valid @RequestBody NationalityDTO nationalityDTO, BindingResult result) {
 
-		Optional<NationalityEntity> recovered = nationalityServiceImp.readByName(nationalityDTO.getName());
+		if (result.hasErrors())
+			return ResponseEntity.status(HttpStatus.CONFLICT)
+					.body("ha ocurrido un error!");
+		
+		Optional<NationalityEntity> recovered = nationalityServiceImp.readByName(nationalityDTO.getName());		
 
 		if (!nationalityDTO.getName().isEmpty() & !nationalityDTO.getLanguage().isEmpty()) {
 
@@ -84,7 +90,11 @@ public class NationalityController {
 	}
 
 	@PutMapping("/update/{id}")
-	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody NationalityDTO nationalityDTO) {
+	public ResponseEntity<?> update(@PathVariable Long id,@Valid @RequestBody NationalityDTO nationalityDTO, BindingResult result) {
+		
+		if (result.hasErrors())
+			return ResponseEntity.status(HttpStatus.CONFLICT)
+					.body("ha ocurrido un error!");
 		
 		List<NationalityEntity> nations = nationalityServiceImp.readAll();
 		Long lastId = nationalityServiceImp.getLastId();

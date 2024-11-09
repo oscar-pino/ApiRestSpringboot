@@ -14,5 +14,8 @@ public interface IUserRepository extends CrudRepository<UserEntity, Long> {
 	
 	@Query(value = "SELECT * FROM users", nativeQuery = true)
 	List<UserEntity> getAllUsers();
+	
+	@Query(value = "SELECT MAX(id) FROM users", nativeQuery = true)
+	Long getLastId();
 
 }

@@ -1,7 +1,6 @@
 package api.security.dto;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import api.security.entities.RoleEntity;
 
@@ -21,35 +20,27 @@ public class UserDTO {
 
 	private boolean credentialNoExpired;
 
-	private Set<RoleEntity> roles = new HashSet<>();
+	private List<RoleEntity> roles;
 
 	public UserDTO() {
 
 	}
 
-	public UserDTO(String username, String password, boolean isEnabled, boolean accountNoExpired,
-			boolean accountNoLocked, boolean credentialNoExpired, Set<RoleEntity> roles) {
+	public UserDTO(String username, String password, List<RoleEntity> roles) {
 
 		this.username = username;
 		this.password = password;
-		this.isEnabled = isEnabled;
-		this.accountNoExpired = accountNoExpired;
-		this.accountNoLocked = accountNoLocked;
-		this.credentialNoExpired = credentialNoExpired;
+		this.isEnabled = true;
+		this.accountNoExpired = true;
+		this.accountNoLocked = true;
+		this.credentialNoExpired = true;
 		this.roles = roles;
 	}
 
-	public UserDTO(Long id, String username, String password, boolean isEnabled, boolean accountNoExpired,
-			boolean accountNoLocked, boolean credentialNoExpired, Set<RoleEntity> roles) {
+	public UserDTO(Long id, String username, String password, List<RoleEntity> roles) {
 
+		this(username, password, roles);
 		this.id = id;
-		this.username = username;
-		this.password = password;
-		this.isEnabled = isEnabled;
-		this.accountNoExpired = accountNoExpired;
-		this.accountNoLocked = accountNoLocked;
-		this.credentialNoExpired = credentialNoExpired;
-		this.roles = roles;
 	}
 
 	public Long getId() {
@@ -108,11 +99,11 @@ public class UserDTO {
 		this.credentialNoExpired = credentialNoExpired;
 	}
 
-	public Set<RoleEntity> getRoles() {
+	public List<RoleEntity> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(Set<RoleEntity> roles) {
+	public void setRoles(List<RoleEntity> roles) {
 		this.roles = roles;
 	}
 

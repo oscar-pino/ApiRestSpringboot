@@ -6,6 +6,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "nationalities")
@@ -16,9 +18,13 @@ public class NationalityEntity {
 	private Long id;	
 
 	@Column(unique = true, nullable = false)
+	@NotBlank(message = "el campo no debe ser null o solo contener espacios en blanco")
+	@Size(min = 4, max = 20, message = "ingrese 4 caracteres como mínimo y 20 como máximo")
 	private String name;	
 
-	@Column(nullable = false)
+	@Column(nullable = false)	
+	@NotBlank(message = "el campo no debe ser null o solo contener espacios en blanco")
+	@Size(min = 5, max = 20, message = "ingrese 5 caracteres como mínimo y 20 como máximo")
 	private String language;
 
 	public NationalityEntity() {
@@ -30,8 +36,7 @@ public class NationalityEntity {
 	}
 	
 	public NationalityEntity(Long id, String name, String language) {
-		this.name = name;
-		this.language = language;
+		this(name, language);
 		this.id = id;
 	}
 

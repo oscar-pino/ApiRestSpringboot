@@ -1,7 +1,6 @@
 package api.security.entities;
 
 import java.util.List;
-import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -14,6 +13,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "users")
@@ -24,8 +25,12 @@ public class UserEntity {
     private Long id;
 
     @Column(unique = true)
+    @NotBlank(message = "el campo no debe ser null o solo contener espacios en blanco")
+	@Size(min = 5, max = 20, message = "ingrese 5 caracteres como mínimo y 20 como máximo")
     private String username;
     
+    @NotBlank(message = "el campo no debe ser null o solo contener espacios en blanco")
+	@Size(min = 5, message = "ingrese 5 caracteres como mínimo")
     private String password;
 
     @Column(name = "is_enabled")
@@ -48,42 +53,23 @@ public class UserEntity {
 		
 	}
 	
-	public UserEntity(String username, String password, boolean isEnabled, boolean accountNoExpired,
-			boolean accountNoLocked, boolean credentialNoExpired) {
+	public UserEntity(String username, String password, List<RoleEntity> roles) {
 	
 		this.username = username;
 		this.password = password;
-		this.isEnabled = isEnabled;
-		this.accountNoExpired = accountNoExpired;
-		this.accountNoLocked = accountNoLocked;
-		this.credentialNoExpired = credentialNoExpired;
-	}
-
-	public UserEntity(String username, String password, boolean isEnabled, boolean accountNoExpired,
-			boolean accountNoLocked, boolean credentialNoExpired, List<RoleEntity> roles) {
-	
-		this.username = username;
-		this.password = password;
-		this.isEnabled = isEnabled;
-		this.accountNoExpired = accountNoExpired;
-		this.accountNoLocked = accountNoLocked;
-		this.credentialNoExpired = credentialNoExpired;
+		this.isEnabled = true;
+		this.accountNoExpired = true;
+		this.accountNoLocked = true;
+		this.credentialNoExpired = true;
 		this.roles = roles;
 	}
 	
-	public UserEntity(Long id, String username, String password, boolean isEnabled, boolean accountNoExpired,
-			boolean accountNoLocked, boolean credentialNoExpired, List<RoleEntity> roles) {
-	
+	public UserEntity(Long id, String username, String password, List<RoleEntity> roles) {
+		
+		this(username, password, roles);
 		this.id = id;
-		this.username = username;
-		this.password = password;
-		this.isEnabled = isEnabled;
-		this.accountNoExpired = accountNoExpired;
-		this.accountNoLocked = accountNoLocked;
-		this.credentialNoExpired = credentialNoExpired;
-		this.roles = roles;
-	}
-
+	}	
+	
 	public Long getId() {
 		return id;
 	}

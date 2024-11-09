@@ -7,6 +7,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "customers")
@@ -16,30 +19,44 @@ public class CustomerEntity {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
+	@NotBlank(message = "el campo no debe ser null o solo contener espacios en blanco")
+	@Size(min = 3, max = 20, message = "ingrese 3 caracteres como mínimo y 20 como máximo")
 	private String firstName;
 	
+	@NotBlank(message = "el campo no debe ser null o solo contener espacios en blanco")
+	@Size(min = 3, max = 20, message = "ingrese 3 caracteres como mínimo y 20 como máximo")
 	private String lastName;	
 	
 	@ManyToOne
 	@JoinColumn(name = "nationality_id", nullable = false)
 	private NationalityEntity nationality;
 
+	@NotBlank(message = "el campo no debe ser null o solo contener espacios en blanco")
+	@Size(max = 30, message = "ingrese 30 caracteres como máximo")
 	private String address;
 	
 	@Column(unique=true)
+	@Size(max = 30, message = "ingrese 30 caracteres como máximo")
+	@Email(message = "el email debe tener un formato válido")
 	private String email;
 	
+	@NotBlank(message = "el campo no debe ser null o solo contener espacios en blanco")
+	@Size(min = 10, max = 20, message = "ingrese 10 caracteres como mínimo y 20 como máximo")
 	private String phone;
 
 	public CustomerEntity() {
 	}	
-
-	public CustomerEntity(String firstName, String lastName, NationalityEntity nationality, String address, String email,
-			String phone) {
+	
+	public CustomerEntity(String firstName, String lastName, NationalityEntity nationality, String address) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.nationality = nationality;
 		this.address = address;
+	}
+
+	public CustomerEntity(String firstName, String lastName, NationalityEntity nationality, String address, String email,
+			String phone) {
+		this(firstName, lastName, nationality, address);
 		this.email = email;
 		this.phone = phone;
 	}

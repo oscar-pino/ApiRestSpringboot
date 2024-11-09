@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,7 @@ import api.security.dto.PermissionDTO;
 import api.security.entities.PermissionEntity;
 import api.security.entities.enums.PermissionEnum;
 import api.security.services.PermissionServiceImp;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/permissions")
@@ -28,11 +30,13 @@ public class PermissionController {
 	private PermissionServiceImp permissionServicesImp;
 	
 	@PostMapping("/create")
-	public ResponseEntity<?> create(@RequestBody PermissionDTO permissionDTO) {	
+	public ResponseEntity<?> create(@Valid @RequestBody PermissionDTO permissionDTO, BindingResult result) {	
+		
+		if (result.hasErrors())
+			return ResponseEntity.status(HttpStatus.CONFLICT)
+					.body("ha ocurrido un error!");
 		
 		PermissionEnum permission = null;
-	
-		 try {
 			 
 			 if(permissionDTO == null) {
 					
@@ -48,11 +52,8 @@ public class PermissionController {
 				
 	            permissionServicesImp.create(new PermissionEntity(permission));
 				return ResponseEntity.status(HttpStatus.CREATED)
-						.body(permissionDTO.getPermission() + ", creado sastifactoriamente.");	            
-	            
-	        } catch (IllegalArgumentException e) {
-	            return ResponseEntity.badRequest().body("error. no existe permission: " + permissionDTO.getPermission().name().toUpperCase());
-	        }		
+						.body(permissionDTO.getPermission() + ", creado sastifactoriamente.");	 	            
+	     		
 	}
 
 	
@@ -99,7 +100,11 @@ public class PermissionController {
 	}
 
 	@PutMapping("/update/{id}")
-	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody PermissionDTO permissionDTO) {
+	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody PermissionDTO permissionDTO, BindingResult result) {
+		
+		if (result.hasErrors())
+			return ResponseEntity.status(HttpStatus.CONFLICT)
+					.body("ha ocurrido un error!");
 		
 		Long lastId = permissionServicesImp.getLastId();
 		Optional<PermissionEntity> recovered = null;
@@ -132,9 +137,7 @@ public class PermissionController {
 
 		Optional<PermissionEntity> recovered = permissionServicesImp.readById(id);		
 
-		if (recovered.isPresent()) {
-			
-			System.out.println("existe: "+recovered.get().toString());
+		if (recovered.isPresent()) {		
 			
 			permissionServicesImp.deleteById(id);
 			return ResponseEntity.status(HttpStatus.ACCEPTED)

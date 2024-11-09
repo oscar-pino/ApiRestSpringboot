@@ -2,9 +2,11 @@ package api.security.controllers;
 
 import java.util.List;
 import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,9 +15,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import api.security.dto.RoleDTO;
 import api.security.entities.RoleEntity;
 import api.security.services.RoleServiceImp;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/roles")
@@ -25,8 +29,12 @@ public class RoleController {
 	private RoleServiceImp roleServicesImp;
 	
 	@PostMapping("/create")
-	public ResponseEntity<?> create(@RequestBody RoleDTO roleDTO) {		
+	public ResponseEntity<?> create(@Valid @RequestBody RoleDTO roleDTO, BindingResult result) {		
 
+		if (result.hasErrors())
+			return ResponseEntity.status(HttpStatus.CONFLICT)
+					.body("ha ocurrido un error!");
+		
 		if (roleDTO == null | roleDTO.getPermissionList().isEmpty()) 
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("permission no puede ser vacio");
 		else		
@@ -55,7 +63,7 @@ public class RoleController {
 		
 	@GetMapping("/read/id/{id}")
 	public ResponseEntity<?> readById(@PathVariable Long id) {
-
+	
 		Optional<RoleEntity> recovered = roleServicesImp.readById(id);
 
 		if (recovered.isPresent()) {			
@@ -82,10 +90,14 @@ public class RoleController {
 	}
 
 	@PutMapping("/update/{id}")
-	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody RoleDTO roleDTO) {
+	public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody RoleDTO roleDTO, BindingResult result) {
 
+		if (result.hasErrors())
+			return ResponseEntity.status(HttpStatus.CONFLICT)
+					.body("ha ocurrido un error!");
+		
 		Optional<RoleEntity> recovered = roleServicesImp.readById(id);
-
+	
 		if (roleDTO.getRoleEnum() == null | roleDTO.getPermissionList().isEmpty()) {
 
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("faltan datos.");
@@ -94,8 +106,8 @@ public class RoleController {
 		else if(recovered.isPresent()) {
 			
 				RoleEntity roleEntity = recovered.get();
-				roleEntity.setRoleEnum(null);
-				roleEntity.setPermissionList(null);
+				roleEntity.setRoleEnum(roleDTO.getRoleEnum());
+				roleEntity.setPermissionList(roleDTO.getPermissionList());
 
 				roleServicesImp.update(roleEntity);
 

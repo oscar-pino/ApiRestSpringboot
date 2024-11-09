@@ -27,8 +27,9 @@ public class PublisherDTO {
 	
 	public PublisherDTO() {
 	}
-
-	public PublisherDTO(String name, String address, String phone, String webSite, String email, Date foundingDate) {
+	
+	public PublisherDTO(String name, String address, String phone, String webSite, String email,
+			Date foundingDate) {
 		this.name = name;
 		this.address = address;
 		this.phone = phone;
@@ -36,6 +37,13 @@ public class PublisherDTO {
 		this.email = email;
 		this.foundingDate = foundingDate;
 	}
+
+	public PublisherDTO(Long id, String name, String address, String phone, String webSite, String email,
+			Date foundingDate) {
+		this(name, address, phone, webSite, email, foundingDate);
+		this.publisherId=id;
+	}
+	
 	
 	public String getName() {
 		return name;
