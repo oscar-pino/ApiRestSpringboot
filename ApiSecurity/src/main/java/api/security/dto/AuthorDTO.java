@@ -2,18 +2,19 @@ package api.security.dto;
 
 import java.util.Date;
 
+import api.security.entities.NationalityEntity;
+
 public class AuthorDTO {
 
-	private Long authorId;
-	
+	private Long id;
+
 	private String firstName;
-	
+
 	private String lastName;	
 
-	private NationalityDTO nationalityDTO;
+	private NationalityEntity nationality;
 
 	private String webSite;
-	
 
 	private String email;
 
@@ -21,18 +22,20 @@ public class AuthorDTO {
 
 	public AuthorDTO() {
 	}	
-
-	public AuthorDTO(String firstName, String lastName, NationalityDTO nationalityDTO, String webSite, String email,
-			Date birthDate) {
+	
+	public AuthorDTO(String firstName, String lastName, NationalityEntity nationality, Date birthDate) {
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.nationalityDTO = nationalityDTO;
-		this.webSite = webSite;
-		this.email = email;
+		this.nationality = nationality;
 		this.birthDate = birthDate;
 	}
 
-
+	public AuthorDTO(String firstName, String lastName, NationalityEntity nationality, String webSite, String email,
+			Date birthDate) {
+		this(firstName, lastName, nationality, birthDate);
+		this.webSite = webSite;
+		this.email = email;
+	}
 
 	public String getFirstName() {
 		return firstName;
@@ -74,18 +77,13 @@ public class AuthorDTO {
 		this.birthDate = birthDate;
 	}
 
-	public Long getAuthorId() {
-		return authorId;
-	}
-	
-	public void setAuthorId(Long authorId) {
-		this.authorId = authorId;
+	public Long getId() {
+		return id;
 	}
 
 	@Override
 	public String toString() {
-		return "Author [authorId=" + authorId + ", firstName=" + firstName + ", lastName=" + lastName + ", nationality="
-				+ nationalityDTO.getName() + ", webSite=" + webSite + ", email=" + email + ", birthDate=" + birthDate + "]";
+		return "Author [authorId=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", nationality="
+				+ nationality + ", webSite=" + webSite + ", email=" + email + ", birthDate=" + birthDate + "]";
 	}
-	
 }

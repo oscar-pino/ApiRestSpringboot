@@ -16,8 +16,8 @@ public class PermissionDTO {
 	}
 
 	public PermissionDTO(Long id, PermissionEnum permissionEnum) {
+		this(permissionEnum);
 		this.id = id;
-		this.permissionEnum = permissionEnum;
 	}
 
 	public Long getId() {
@@ -28,16 +28,11 @@ public class PermissionDTO {
 		this.id = id;
 	}
 
-	public PermissionEnum getPermission() {
+	public PermissionEnum getPermissionEnum() {
 		return permissionEnum;
 	}
 
-	public void setPermission(PermissionEnum permissionEnum) {
+	public void setPermissionEnum(PermissionEnum permissionEnum) {
 		this.permissionEnum = permissionEnum;
 	}
-
-	@Override
-	public String toString() {
-		return "PermissionEntity [id=" + id + ", name=" + this.permissionEnum.name() + "]";
-	}    
 }

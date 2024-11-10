@@ -44,15 +44,15 @@ public class PermissionController {
 				}
 			
 	            
-				 permission = PermissionEnum.valueOf(permissionDTO.getPermission().name().toUpperCase());
+				 permission = PermissionEnum.valueOf(permissionDTO.getPermissionEnum().name().toUpperCase());
 				 
 				 if(permission == null)
-					 return ResponseEntity.badRequest().body("no existe permission: " + permissionDTO.getPermission().name().toUpperCase());
+					 return ResponseEntity.badRequest().body("no existe permission: " + permissionDTO.getPermissionEnum().name().toUpperCase());
 				 
 				
 	            permissionServicesImp.create(new PermissionEntity(permission));
 				return ResponseEntity.status(HttpStatus.CREATED)
-						.body(permissionDTO.getPermission() + ", creado sastifactoriamente.");	 	            
+						.body(permissionDTO.getPermissionEnum() + ", creado sastifactoriamente.");	 	            
 	     		
 	}
 
@@ -123,7 +123,7 @@ public class PermissionController {
 		
 		if(recovered.isPresent()) {
 			
-			recovered.get().setPermissionEnum(permissionDTO.getPermission());
+			recovered.get().setPermissionEnum(permissionDTO.getPermissionEnum());
 			permissionServicesImp.update(recovered.get());			
 			return ResponseEntity.status(HttpStatus.CREATED).body(recovered.get().getPermissionEnum() + ", actualizada sastifactoriamente.");
 		}

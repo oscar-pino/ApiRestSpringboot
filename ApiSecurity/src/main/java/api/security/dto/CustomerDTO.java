@@ -1,30 +1,36 @@
 package api.security.dto;
 
+import api.security.entities.NationalityEntity;
+
 public class CustomerDTO {
 
-	private Long customerId;
-	
+	private Long id;
+
 	private String firstName;
-	
+
 	private String lastName;	
 
-	private NationalityDTO nationalityDTO;
+	private NationalityEntity nationality;
 
 	private String address;
 
 	private String email;
-	
+
 	private String phone;
 
 	public CustomerDTO() {
 	}	
-
-	public CustomerDTO(String firstName, String lastName, NationalityDTO nationalityDTO, String address, String email,
-			String phone) {
+	
+	public CustomerDTO(String firstName, String lastName, NationalityEntity nationality, String address) {
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.nationalityDTO = nationalityDTO;
+		this.nationality = nationality;
 		this.address = address;
+	}
+
+	public CustomerDTO(String firstName, String lastName, NationalityEntity nationality, String address, String email,
+			String phone) {
+		this(firstName, lastName, nationality, address);
 		this.email = email;
 		this.phone = phone;
 	}
@@ -70,21 +76,21 @@ public class CustomerDTO {
 	}
 
 	public Long getCustomerId() {
-		return customerId;
+		return id;
 	}
 
-	public NationalityDTO getNationality() {
-		return nationalityDTO;
+	public NationalityEntity getNationality() {
+		return nationality;
 	}
 
-	public void setNationality(NationalityDTO nationalityDTO) {
-		this.nationalityDTO = nationalityDTO;
+	public void setNationality(NationalityEntity nationality) {
+		this.nationality = nationality;
 	}
 
 	@Override
 	public String toString() {
-		return "Customer [customerId=" + customerId + ", firstName=" + firstName + ", lastName=" + lastName
-				+ ", address=" + address + ", email=" + email + ", phone=" + phone
+		return "Customer [customerId=" + id + ", firstName=" + firstName + ", lastName=" + lastName
+				+ ", nationality=" + nationality + ", address=" + address + ", email=" + email + ", phone=" + phone
 				+ "]";
 	}	
 }

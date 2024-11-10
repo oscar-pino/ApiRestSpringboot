@@ -1,42 +1,32 @@
 package api.security.dto;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.time.LocalDate;
+import java.util.List;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import api.security.entities.BookEntity;
+import api.security.entities.CustomerEntity;
+import api.security.entities.ReturnEntity;
 
 public class LoanDTO {
 
-	private Long loanId;
+	private Long id;
 
-	private Set<BookDTO> books = new HashSet<>();
+	private List<BookEntity> books;
 
-	private CustomerDTO customer;
-	
-	private Date loanDate;
-	
-	private Date deliverDate;
-	
+	private CustomerEntity customer;
+
+	private LocalDate loanDate;
+
+	private LocalDate deliverDate;
+
 	private String status;	
 
-	private ReturnDTO returnDTO;
+	private ReturnEntity returns;
 
 	public LoanDTO() {
 	}	
 
-	public LoanDTO(Set<BookDTO> books, CustomerDTO customer, Date loanDate, Date deliverDate, String status) {
+	public LoanDTO(List<BookEntity> books, CustomerEntity customer, LocalDate loanDate, LocalDate deliverDate, String status) {
 		this.books = books;
 		this.customer = customer;
 		this.loanDate = loanDate;
@@ -44,19 +34,19 @@ public class LoanDTO {
 		this.status = status;
 	}
 
-	public Date getLoanDate() {
+	public LocalDate getLoanDate() {
 		return loanDate;
 	}
 
-	public void setLoanDate(Date loanDate) {
+	public void setLoanDate(LocalDate loanDate) {
 		this.loanDate = loanDate;
 	}
 
-	public Date getDeliverDate() {
+	public LocalDate getDeliverDate() {
 		return deliverDate;
 	}
 
-	public void setDeliverDate(Date deliverDate) {
+	public void setDeliverDate(LocalDate deliverDate) {
 		this.deliverDate = deliverDate;
 	}
 
@@ -68,41 +58,29 @@ public class LoanDTO {
 		this.status = status;
 	}
 
-	public Long getLoanId() {
-		return loanId;
-	}
-	
-	public void setLoanId(Long loanId) {
-		this.loanId = loanId;
+	public Long getId() {
+		return id;
 	}
 
-	public Set<BookDTO> getBooks() {
+	public List<BookEntity> getBooks() {
 		return books;
-	}
+	}	
 
-	public void setBooks(Set<BookDTO> books) {
+	public void setBooks(List<BookEntity> books) {
 		this.books = books;
 	}
 
-	public CustomerDTO getCustomer() {
+	public CustomerEntity getCustomer() {
 		return customer;
 	}
 
-	public void setCustomer(CustomerDTO customer) {
+	public void setCustomer(CustomerEntity customer) {
 		this.customer = customer;
-	}	
-
-	public ReturnDTO getReturnDTO() {
-		return returnDTO;
-	}
-
-	public void setReturnDTO(ReturnDTO returnDTO) {
-		this.returnDTO = returnDTO;
 	}
 
 	@Override
 	public String toString() {
-		return "Loan [loanId=" + loanId + ", books=" + books + ", customer=" + customer + ", loanDate=" + loanDate
+		return "Loan [loanId=" + id +", customer=" + customer.getFirstName() + ", loanDate=" + loanDate
 				+ ", deliverDate=" + deliverDate + ", status=" + status + "]";
 	}
 }

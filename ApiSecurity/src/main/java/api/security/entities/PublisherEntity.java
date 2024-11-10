@@ -129,5 +129,4 @@ public class PublisherEntity {
 		return "Publisher [publisherId=" + id + ", name=" + name + ", address=" + address + ", phone=" + phone
 				+ ", webSite=" + webSite + ", email=" + email + ", foundingDate=" + foundingDate + "]";
 	}
-
 }

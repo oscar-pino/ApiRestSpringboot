@@ -33,7 +33,7 @@ public class UserController {
 
 		if (result.hasErrors())
 			return ResponseEntity.status(HttpStatus.CONFLICT)
-					.body("ha ocurrido un error!");
+					.body("ha ocurrido un error: "+result.getFieldError().getDefaultMessage());
 		
 		Optional<UserEntity> recovered = userServiceImp.readByUsername(userDTO.getUsername());
 
@@ -93,7 +93,7 @@ public class UserController {
 		
 		if (result.hasErrors())
 			return ResponseEntity.status(HttpStatus.CONFLICT)
-					.body("ha ocurrido un error!");
+					.body("ha ocurrido un error: "+result.getFieldError().getDefaultMessage());
 		
 		List<UserEntity> users = userServiceImp.readAll();
 		Long lastId = userServiceImp.getLastId();

@@ -1,37 +1,41 @@
 package api.security.dto;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+
+import api.security.entities.AuthorEntity;
+import api.security.entities.CategoryEntity;
+import api.security.entities.PublisherEntity;
 
 public class BookDTO {
 
-	private Long bookId;	
-	
+	private Long id;	
+
 	private String title;
-	
+
 	private String isbm;
 
-	private PublisherDTO PublisherDTO;
+	private PublisherEntity publisher;
 
-	private CategoryDTO categoryDTO;
+	private CategoryEntity category;
 
-	private AuthorDTO authorDTO;
+	private AuthorEntity author;
 
 	private Date publicationYear;
 
 	private int quantity;
-
+	
+//	@ManyToMany(mappedBy = "books")
+//	private Set<Loan> loans = new HashSet<>();
 	
 	public BookDTO() {
 	}
 
-	public BookDTO(String title, String isbm, PublisherDTO PublisherDTO, CategoryDTO category, AuthorDTO author, Date publicationYear, int quantity) {
+	public BookDTO(String title, String isbm, PublisherEntity publisher, CategoryEntity category, AuthorEntity author, Date publicationYear, int quantity) {
 	this.title = title;
 	this.isbm = isbm;
-	this.PublisherDTO = PublisherDTO;
-	this.categoryDTO = category;
-	this.authorDTO = author;
+	this.publisher = publisher;
+	this.category = category;
+	this.author = author;
 	this.publicationYear = publicationYear;
 	this.quantity = quantity;
 }
@@ -60,42 +64,38 @@ public class BookDTO {
 		this.publicationYear = publicationYear;
 	}
 
-	public Long getBookId() {
-		return bookId;
-	}
-	
-	public void setBookId(Long bookId) {
-		this.bookId = bookId;
+	public Long getId() {
+		return id;
 	}
 
-	public PublisherDTO getPublisherDTO() {
-		return PublisherDTO;
+	public PublisherEntity getPublisher() {
+		return publisher;
 	}
 
-	public void setPublisherDTO(PublisherDTO PublisherDTO) {
-		this.PublisherDTO = PublisherDTO;
+	public void setPublisher(PublisherEntity publisher) {
+		this.publisher = publisher;
 	}
 
-	public CategoryDTO getCategory() {
-		return categoryDTO;
+	public CategoryEntity getCategory() {
+		return category;
 	}
 
-	public void setCategoryDTO(CategoryDTO categoryDTO) {
-		this.categoryDTO = categoryDTO;
+	public void setCategory(CategoryEntity category) {
+		this.category = category;
 	}
 
-	public AuthorDTO getAuthorDTO() {
-		return authorDTO;
+	public AuthorEntity getAuthor() {
+		return author;
 	}
 
-	public void setAuthorDTO(AuthorDTO authorDTO) {
-		this.authorDTO = authorDTO;
+	public void setAuthor(AuthorEntity author) {
+		this.author = author;
 	}
 
 	@Override
 	public String toString() {
-		return "Book [bookId=" + bookId + ", title=" + title + ", isbm=" + isbm + ", PublisherDTO=" + PublisherDTO
-				+ ", category=" + categoryDTO + ", author=" + authorDTO + ", publicationYear=" + publicationYear
+		return "Book [bookId=" + id + ", title=" + title + ", isbm=" + isbm + ", publisher=" + publisher
+				+ ", category=" + category + ", author=" + author.getFirstName() + ", publicationYear=" + publicationYear
 				+ ", quantity=" + quantity + "]";
 	}	
 }

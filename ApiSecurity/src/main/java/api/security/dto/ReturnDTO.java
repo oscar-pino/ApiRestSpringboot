@@ -2,11 +2,13 @@ package api.security.dto;
 
 import java.util.Date;
 
+import api.security.entities.LoanEntity;
+
 public class ReturnDTO {
 
-	private Long returnId;	
+	private Long id;		
 
-	private LoanDTO loanDTO;
+	private LoanEntity loan;
 	
 	private Date returnDate;
 
@@ -15,8 +17,8 @@ public class ReturnDTO {
 	public ReturnDTO() {
 	}	
 
-	public ReturnDTO(LoanDTO loanDTO, Date returnDate, Float penalty) {
-		this.loanDTO = loanDTO;
+	public ReturnDTO(LoanEntity loan, Date returnDate, Float penalty) {
+		this.loan = loan;
 		this.returnDate = returnDate;
 		this.penalty = penalty;
 	}
@@ -37,16 +39,16 @@ public class ReturnDTO {
 		this.penalty = penalty;
 	}
 
-	public Long getReturnId() {
-		return returnId;
+	public Long getId() {
+		return id;
 	}
 
-	public LoanDTO getLoan() {
-		return loanDTO;
+	public LoanEntity getLoan() {
+		return loan;
 	}
 
-	public void setLoan(LoanDTO loanDTO) {
-		this.loanDTO = loanDTO;
+	public void setLoan(LoanEntity loan) {
+		this.loan = loan;
 	}
 
 	public Date getReturnDate() {
@@ -55,7 +57,7 @@ public class ReturnDTO {
 	
 	@Override
 	public String toString() {
-		return "Return [returnId=" + returnId + ", returnDate=" + returnDate + ", penalty=" + penalty
+		return "Return [returnId=" + id + ", loan=" + loan + ", returnDate=" + returnDate + ", penalty=" + penalty
 				+ "]";
 	}
 }

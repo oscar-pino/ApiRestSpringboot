@@ -1,31 +1,25 @@
 package api.security.dto;
 
-
 public class NationalityDTO {
 
-	private Long nationalityId;	
+	private Long id;	
 
-	private String name;
+	private String name;	
 
 	private String language;
 
 	public NationalityDTO() {
 	}
-	
-	public NationalityDTO(String name) {
-		this.name = name;
-	}
-	
+
 	public NationalityDTO(String name, String language) {
 		this.name = name;
 		this.language = language;
 	}
 	
-	public NationalityDTO(Long nationalityId, String name, String language) {
-		this.name = name;
-		this.language = language;
-		this.nationalityId = nationalityId;
-	}	
+	public NationalityDTO(Long id, String name, String language) {
+		this(name, language);
+		this.id = id;
+	}
 
 	public String getName() {
 		return name;
@@ -43,16 +37,12 @@ public class NationalityDTO {
 		this.language = language;
 	}
 
-	public Long getNationalityId() {
-		return nationalityId;
-	}	
-
-	public void setNationalityId(Long nationalityId) {
-		this.nationalityId = nationalityId;
+	public Long getId() {
+		return id;
 	}
 
 	@Override
 	public String toString() {
-		return "Nationality [nationalityId=" + nationalityId + ", name=" + name + ", language=" + language + "]";
-	}	
+		return "Nationality [nationalityId=" + id + ", name=" + name + ", language=" + language + "]";
+	}
 }

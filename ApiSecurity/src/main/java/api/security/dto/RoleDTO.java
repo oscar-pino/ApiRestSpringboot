@@ -1,65 +1,57 @@
 package api.security.dto;
 
 import java.util.List;
-import java.util.Set;
 
 import api.security.entities.PermissionEntity;
 import api.security.entities.enums.RoleEnum;
 
 public class RoleDTO {
-	
-    private Long id;
-    
-    private RoleEnum roleEnum;
-    
-    private List<PermissionEntity> permissionList;
 
-	public RoleDTO() {
-		
-	}
+	    private Long id;
 
-	public RoleDTO(RoleEnum roleEnum) {
-		this.roleEnum = roleEnum;
-	}
+	    private RoleEnum roleEnum;
+	    
+	    private List<PermissionEntity> permissionList;
 
-	public RoleDTO(RoleEnum roleEnum, List<PermissionEntity> permissionList) {
-		this.roleEnum = roleEnum;
-		this.permissionList = permissionList;
-	}
+		public RoleDTO() {
+			
+		}
 
-	public RoleDTO(Long id, RoleEnum roleEnum, List<PermissionEntity> permissionList) {
-		this.id = id;
-		this.roleEnum = roleEnum;
-		this.permissionList = permissionList;
-	}
+		public RoleDTO(RoleEnum roleEnum) {
+			this.roleEnum = roleEnum;
+		}
 
-	public Long getId() {
-		return id;
-	}
+		public RoleDTO(RoleEnum roleEnum, List<PermissionEntity> permissionList) {
+			this(roleEnum);
+			this.permissionList = permissionList;
+		}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+		public Long getId() {
+			return id;
+		}
 
-	public RoleEnum getRoleEnum() {
-		return roleEnum;
-	}
+		public void setId(Long id) {
+			this.id = id;
+		}
 
-	public void setRoleEnum(RoleEnum roleEnum) {
-		this.roleEnum = roleEnum;
-	}
+		public RoleEnum getRoleEnum() {
+			return roleEnum;
+		}
 
-	public List<PermissionEntity> getPermissionList() {
-		return permissionList;
-	}
+		public void setRoleEnum(RoleEnum roleEnum) {
+			this.roleEnum = roleEnum;
+		}
 
-	public void setPermissionList(List<PermissionEntity> permissionList) {
-		this.permissionList = permissionList;
-	}
+		public List<PermissionEntity> getPermissionList() {
+			return permissionList;
+		}
 
-	@Override
-	public String toString() {
-		return "RoleEntity [id=" + id + ", roleEnum=" + roleEnum + ", permissionListSize=" + permissionList.size() + "]";
-	}    
+		public void setPermissionList(List<PermissionEntity> permissionList) {
+			this.permissionList = permissionList;
+		}
 
+		@Override
+		public String toString() {
+			return "RoleEntity [id=" + id + ", roleEnum=" + roleEnum + ", permissionListSize=" + permissionList.size() + "]";
+		}    
 }

@@ -90,7 +90,7 @@ public class NationalityController {
 	}
 
 	@PutMapping("/update/{id}")
-	public ResponseEntity<?> update(@PathVariable Long id,@Valid @RequestBody NationalityDTO nationalityDTO, BindingResult result) {
+	public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody NationalityDTO nationalityDTO, BindingResult result) {
 		
 		if (result.hasErrors())
 			return ResponseEntity.status(HttpStatus.CONFLICT)

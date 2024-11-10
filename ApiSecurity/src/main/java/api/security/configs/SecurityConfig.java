@@ -25,25 +25,15 @@ public class SecurityConfig {
 		return httpSecurity
 				.csrf(csrf -> csrf.disable())
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.authorizeHttpRequests(http -> {
+				.authorizeHttpRequests(auth -> {
 					
-					http.requestMatchers(HttpMethod.POST, "/api/nationalities/create").hasRole("ADMIN");
-					
-					/*
-					http.requestMatchers(HttpMethod.POST, "/api/**").hasRole("ADMIN");
-					http.requestMatchers(HttpMethod.GET, "/public").permitAll();
-					
-					http.requestMatchers(HttpMethod.GET, "/user").hasRole("USER");
-					
-					http.requestMatchers(HttpMethod.POST, "/api/nationalities/create").hasAuthority("CREATE");
-					
-					http.requestMatchers(HttpMethod.POST, "/api/nationalities/delete").hasRole("ADMIN");
-					http.requestMatchers(HttpMethod.GET, "/api/nationalities/readAll").hasAnyRole("USER");			
-		*/
-					// http.anyRequest().denyAll();
-					http.anyRequest().authenticated();
-				}).
-				httpBasic(Customizer.withDefaults()).build();
+			        auth.requestMatchers(HttpMethod.POST, "/**").hasAnyRole("ADMIN", "DEVELOPER", "USER");
+	                auth.requestMatchers(HttpMethod.GET, "/api/**").hasAnyRole("ADMIN", "DEVELOPER", "USER", "INVITED");
+	                auth.requestMatchers(HttpMethod.PUT, "/api/**").hasAnyRole("ADMIN", "DEVELOPER");
+	                auth.requestMatchers(HttpMethod.DELETE, "/api/**").hasRole("ADMIN");
+	                auth.anyRequest().authenticated(); 
+	            })
+				.httpBasic(Customizer.withDefaults()).build();
 	}
 
 	/*

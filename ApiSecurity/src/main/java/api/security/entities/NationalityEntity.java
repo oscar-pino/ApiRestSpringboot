@@ -76,6 +76,4 @@ public class NationalityEntity {
 			return false;
 		return true;
 	}	
-	
-	
 }

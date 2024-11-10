@@ -50,6 +50,5 @@ public class PermissionEntity {
 
 	public void setPermissionEnum(PermissionEnum permissionEnum) {
 		this.permissionEnum = permissionEnum;
-	}
-  
+	}  
 }

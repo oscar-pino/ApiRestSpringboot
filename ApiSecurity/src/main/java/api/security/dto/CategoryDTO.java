@@ -2,7 +2,7 @@ package api.security.dto;
 
 public class CategoryDTO {
 
-	private Long categoryId;
+	private Long id;
 
 	private String name;	
 
@@ -10,16 +10,17 @@ public class CategoryDTO {
 
 	public CategoryDTO() {
 	}
-
+	
 	public CategoryDTO(String name, String description) {
+	
 		this.name = name;
 		this.description = description;
 	}
-	
-	public CategoryDTO(Long categoryId, String name, String description) {
+
+	public CategoryDTO(Long id, String name, String description) {
+		
 		this(name, description);
-		this.categoryId = categoryId;
-	
+		this.id = id;
 	}
 
 	public String getName() {
@@ -38,16 +39,12 @@ public class CategoryDTO {
 		this.description = description;
 	}
 
-	public Long getCategoryId() {
-		return categoryId;
-	}
-	
-	public void setCategoryId(Long categoryId) {
-		this.categoryId = categoryId;
+	public Long getId() {
+		return id;
 	}
 
 	@Override
 	public String toString() {
-		return "CategoryDTO [CategoryDTOId=" + categoryId + ", name=" + name + ", description=" + description + "]";
+		return "Category [categoryId=" + id + ", name=" + name + ", description=" + description + "]";
 	}	
 }

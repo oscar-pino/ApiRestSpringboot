@@ -119,10 +119,10 @@ public class ApiSecurityApplication {
 
 			if (users.isEmpty()) {			
 				
-				users.add(new UserEntity(1l, "oscar", passwordEncoder.encode("1234"), List.of(roles.get(0))));				
-				users.add(new UserEntity(2l, "yonathan", passwordEncoder.encode("1234"), List.of(roles.get(1))));
-				users.add(new UserEntity(3l, "jose", passwordEncoder.encode("1234"), List.of(roles.get(2))));				
-				users.add(new UserEntity(4l, "juan", passwordEncoder.encode("1234"), List.of(roles.get(3))));
+				users.add(new UserEntity("oscar", passwordEncoder.encode("1234"), List.of(roles.get(0))));				
+				users.add(new UserEntity("yonathan", passwordEncoder.encode("1234"), List.of(roles.get(1))));
+				users.add(new UserEntity("jose", passwordEncoder.encode("1234"), List.of(roles.get(2))));				
+				users.add(new UserEntity("juan", passwordEncoder.encode("1234"), List.of(roles.get(3))));
 				
 				users.stream().forEach(u -> userServiceImp.create(u));
 			}
