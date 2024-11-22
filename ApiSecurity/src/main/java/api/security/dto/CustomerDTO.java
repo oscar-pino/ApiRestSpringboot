@@ -34,6 +34,12 @@ public class CustomerDTO {
 		this.email = email;
 		this.phone = phone;
 	}
+	
+	public CustomerDTO(Long id, String firstName, String lastName, NationalityEntity nationality, String address, String email,
+			String phone) {
+		this(firstName, lastName, nationality, address, email, phone);
+		this.id = id;
+	}
 
 	public String getFirstName() {
 		return firstName;
@@ -83,14 +89,9 @@ public class CustomerDTO {
 		return nationality;
 	}
 
-	public void setNationality(NationalityEntity nationality) {
-		this.nationality = nationality;
-	}
-
 	@Override
 	public String toString() {
-		return "Customer [customerId=" + id + ", firstName=" + firstName + ", lastName=" + lastName
-				+ ", nationality=" + nationality + ", address=" + address + ", email=" + email + ", phone=" + phone
-				+ "]";
+		return "CustomerDTO [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", nationality="
+				+ nationality + ", address=" + address + ", email=" + email + ", phone=" + phone + "]";
 	}	
 }

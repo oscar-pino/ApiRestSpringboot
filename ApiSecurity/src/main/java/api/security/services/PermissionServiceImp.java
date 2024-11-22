@@ -23,6 +23,12 @@ public class PermissionServiceImp implements IDAO<PermissionEntity> {
 		
 		permissionRepository.save(permissionEntity);
 	}
+	
+	@Override
+	public List<PermissionEntity> readAll() {
+
+		return permissionRepository.getAllPermissions();
+	}
 
 	@Override
 	public Optional<PermissionEntity> readById(Long id) {
@@ -34,13 +40,7 @@ public class PermissionServiceImp implements IDAO<PermissionEntity> {
 	public List<PermissionEntity> readAllPermissionByName(String name){
 		
 		return permissionRepository.findAllPermissionByName(name);
-	}
-
-	@Override
-	public List<PermissionEntity> readAll() {
-
-		return permissionRepository.getAllPermissions();
-	}
+	}	
 	
 	@Override
 	public void update(PermissionEntity permissionEntity) {
@@ -57,11 +57,5 @@ public class PermissionServiceImp implements IDAO<PermissionEntity> {
 	public List<PermissionEntity> getUniquePermissions(){
 		
 		return permissionRepository.getUniquePermissions();
-	}
-	
-	@Override
-	public Long getLastId() {
-		
-		return permissionRepository.getLastId();
 	}
 }

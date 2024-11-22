@@ -24,7 +24,7 @@ public class NationalityEntity {
 
 	@Column(nullable = false)	
 	@NotBlank(message = "el campo no debe ser null o solo contener espacios en blanco")
-	@Size(min = 5, max = 20, message = "ingrese 5 caracteres como mínimo y 20 como máximo")
+	@Size(min = 4, max = 20, message = "ingrese 4 caracteres como mínimo y 20 como máximo")
 	private String language;
 
 	public NationalityEntity() {
@@ -59,21 +59,4 @@ public class NationalityEntity {
 	public Long getId() {
 		return id;
 	}
-
-	@Override
-	public String toString() {
-		return "Nationality [nationalityId=" + id + ", name=" + name + ", language=" + language + "]";
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		
-		NationalityEntity ne = (NationalityEntity) obj;
-		
-		if(obj == null)
-			return false;
-		else if(!ne.name.equalsIgnoreCase(this.name) | !ne.language.equalsIgnoreCase(this.language))
-			return false;
-		return true;
-	}	
 }

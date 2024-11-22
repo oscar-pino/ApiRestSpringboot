@@ -43,6 +43,6 @@ public class NationalityDTO {
 
 	@Override
 	public String toString() {
-		return "Nationality [nationalityId=" + id + ", name=" + name + ", language=" + language + "]";
+		return "NationalityDTO [id=" + id + ", name=" + name + ", language=" + language + "]";
 	}
 }

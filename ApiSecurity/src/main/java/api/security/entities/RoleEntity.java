@@ -1,6 +1,6 @@
 package api.security.entities;
 
-import java.util.List;
+import java.util.Set;
 
 import api.security.entities.enums.RoleEnum;
 import jakarta.persistence.CascadeType;
@@ -33,7 +33,7 @@ public class RoleEntity {
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "roles_permissions", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "permission_id"))
-    private List<PermissionEntity> permissionList;
+    private Set<PermissionEntity> permissionList;
 
 	public RoleEntity() {
 		
@@ -43,9 +43,14 @@ public class RoleEntity {
 		this.roleEnum = roleEnum;
 	}
 
-	public RoleEntity(RoleEnum roleEnum, List<PermissionEntity> permissionList) {
+	public RoleEntity(RoleEnum roleEnum, Set<PermissionEntity> permissionList) {
 		this(roleEnum);
 		this.permissionList = permissionList;
+	}
+	
+	public RoleEntity(Long id, RoleEnum roleEnum, Set<PermissionEntity> permissionList) {
+		this(roleEnum, permissionList);
+		this.id=id;
 	}
 
 	public Long getId() {
@@ -64,16 +69,11 @@ public class RoleEntity {
 		this.roleEnum = roleEnum;
 	}
 
-	public List<PermissionEntity> getPermissionList() {
+	public Set<PermissionEntity> getPermissionList() {
 		return permissionList;
 	}
 
-	public void setPermissionList(List<PermissionEntity> permissionList) {
+	public void setPermissionList(Set<PermissionEntity> permissionList) {
 		this.permissionList = permissionList;
 	}
-
-	@Override
-	public String toString() {
-		return "RoleEntity [id=" + id + ", roleEnum=" + roleEnum + ", permissionListSize=" + permissionList.size() + "]";
-	}    
 }

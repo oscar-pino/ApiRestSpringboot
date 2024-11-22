@@ -1,7 +1,5 @@
 package api.security.entities;
 
-import java.util.Date;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,7 +11,6 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -48,26 +45,33 @@ public class AuthorEntity {
 	@Size(max = 30, message = "ingrese 30 caracteres como máximo")
 	@Email(message = "el email debe tener un formato válido")
 	private String email;
-	
-	@Column(name = "birth_date")
-	@Past(message = "la fecha debe ser anterior a la fecha actual")
-	private Date birthDate;
 
 	public AuthorEntity() {
 	}	
 	
-	public AuthorEntity(String firstName, String lastName, NationalityEntity nationality, Date birthDate) {
+	public AuthorEntity(String firstName, String lastName, NationalityEntity nationality) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.nationality = nationality;
-		this.birthDate = birthDate;
 	}
 
-	public AuthorEntity(String firstName, String lastName, NationalityEntity nationality, String webSite, String email,
-			Date birthDate) {
-		this(firstName, lastName, nationality, birthDate);
+	public AuthorEntity(String firstName, String lastName, NationalityEntity nationality, String webSite, String email) {
+		this(firstName, lastName, nationality);
 		this.webSite = webSite;
 		this.email = email;
+	}
+	
+	public AuthorEntity(Long id, String firstName, String lastName, NationalityEntity nationality, String webSite, String email) {
+		this(firstName, lastName, nationality, webSite, email);		
+		this.id = id;
+	}
+	
+	public Long getId() {
+		return id;
+	}	
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getFirstName() {
@@ -101,23 +105,13 @@ public class AuthorEntity {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-
-	public Date getBirthDate() {
-		return birthDate;
-	}
-
-	public void setBirthDate(Date birthDate) {
-		this.birthDate = birthDate;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	@Override
-	public String toString() {
-		return "Author [authorId=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", nationality="
-				+ nationality + ", webSite=" + webSite + ", email=" + email + ", birthDate=" + birthDate + "]";
-	}
 	
+	
+	public NationalityEntity getNationality() {
+		return nationality;
+	}
+
+	public void setNationality(NationalityEntity nationality) {
+		this.nationality = nationality;
+	}	
 }

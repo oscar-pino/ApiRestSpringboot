@@ -19,7 +19,7 @@ public class CategoryEntity {
 	
 	@Column(unique=true)
 	@NotBlank(message = "el campo no debe ser null o solo contener espacios en blanco")
-	@Size(max = 20, message = "ingrese 20 caracteres como máximo")
+	@Size(max = 100, message = "ingrese 100 caracteres como máximo")
 	private String name;	
 	
 	@Column(unique=true)
@@ -61,9 +61,4 @@ public class CategoryEntity {
 	public Long getId() {
 		return id;
 	}
-
-	@Override
-	public String toString() {
-		return "Category [categoryId=" + id + ", name=" + name + ", description=" + description + "]";
-	}	
 }

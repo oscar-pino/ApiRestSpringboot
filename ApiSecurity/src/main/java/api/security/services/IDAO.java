@@ -7,13 +7,11 @@ public interface IDAO<T> {
 	
 	void create(T t);
 	
-	Optional<T> readById(Long id);
-
 	List<T> readAll();
+	
+	Optional<T> readById(Long id);	
 	
 	void deleteById(Long id);
 	
 	void update(T t);
-	
-	Long getLastId();
 }

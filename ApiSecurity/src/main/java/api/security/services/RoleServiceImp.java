@@ -1,6 +1,5 @@
 package api.security.services;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,12 +24,12 @@ public class RoleServiceImp implements IDAO<RoleEntity> {
 	@Override
 	public List<RoleEntity> readAll() {
 
-		return (ArrayList<RoleEntity>) roleRepository.findAll();
+		return (List<RoleEntity>) roleRepository.findAll();
 	}
 	
 	public List<RoleEntity> readAllByName(String name) {
 
-		return roleRepository.findAllByName(name);
+		return (List<RoleEntity>) roleRepository.findAllByName(name);
 	}
 	
 	@Override
@@ -51,9 +50,4 @@ public class RoleServiceImp implements IDAO<RoleEntity> {
 		roleRepository.deleteById(id);
 	}	
 
-	@Override
-	public Long getLastId() {
-		
-		return roleRepository.getLastId();
-	}
 }

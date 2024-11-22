@@ -115,35 +115,23 @@ public class CategoryController {
 		if (result.hasErrors())
 			return ResponseEntity.status(HttpStatus.CONFLICT)
 					.body("ha ocurrido un error!");
-		
-		Long lastId = categoryServicesImp.getLastId();
-		Optional<CategoryEntity> recovered = null;
 
-		if (id < 1 | id > lastId | CategoryDTO == null) {
+		Optional<CategoryEntity> recovered = categoryServicesImp.readById(id);
+
+		if (!recovered.isPresent() | CategoryDTO == null) {
 
 			if (CategoryDTO == null)
 				return ResponseEntity.status(HttpStatus.ACCEPTED).body(("faltan datos."));
 			else
-				return ResponseEntity.status(HttpStatus.ACCEPTED).body(("no existe permission con id: " + id));
-		}else {
-			
-			recovered = categoryServicesImp.readById(id);
+				return ResponseEntity.status(HttpStatus.ACCEPTED).body(("no existe category con id: " + id));
 		}
-		
-		
-		if(recovered.isPresent()) {
 			
 			recovered.get().setName(CategoryDTO.getName());
 			recovered.get().setDescription(CategoryDTO.getDescription());
 			categoryServicesImp.update(recovered.get());			
 			return ResponseEntity.status(HttpStatus.CREATED).body(recovered.get().getName() + ", actualizada sastifactoriamente.");
-		}
-			
-		return ResponseEntity.status(HttpStatus.ACCEPTED).body(("ingrese un category valido!"));
-		
 	}
-	
-	
+		
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<?> deleteById(@PathVariable Long id) {
 

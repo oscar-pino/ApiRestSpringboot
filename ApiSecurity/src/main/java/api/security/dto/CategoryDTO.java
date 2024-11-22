@@ -45,6 +45,6 @@ public class CategoryDTO {
 
 	@Override
 	public String toString() {
-		return "Category [categoryId=" + id + ", name=" + name + ", description=" + description + "]";
+		return "CategoryDTO [id=" + id + ", name=" + name + ", description=" + description + "]";
 	}	
 }

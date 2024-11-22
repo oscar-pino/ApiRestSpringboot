@@ -1,6 +1,6 @@
 package api.security.entities;
 
-import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -26,11 +26,11 @@ public class UserEntity {
 
     @Column(unique = true)
     @NotBlank(message = "el campo no debe ser null o solo contener espacios en blanco")
-	@Size(min = 5, max = 20, message = "ingrese 5 caracteres como mínimo y 20 como máximo")
+	@Size(min = 3, max = 20, message = "ingrese 3 caracteres como mínimo y 20 como máximo")
     private String username;
     
     @NotBlank(message = "el campo no debe ser null o solo contener espacios en blanco")
-	@Size(min = 5, message = "ingrese 5 caracteres como mínimo")
+	@Size(min = 3, message = "ingrese 3 caracteres como mínimo")
     private String password;
 
     @Column(name = "is_enabled")
@@ -47,13 +47,13 @@ public class UserEntity {
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private List<RoleEntity> roles;
+    private Set<RoleEntity> roles;
 
 	public UserEntity() {
 		
 	}
 	
-	public UserEntity(String username, String password, List<RoleEntity> roles) {
+	public UserEntity(String username, String password, Set<RoleEntity> roles) {
 	
 		this.username = username;
 		this.password = password;
@@ -64,7 +64,7 @@ public class UserEntity {
 		this.roles = roles;
 	}
 	
-	public UserEntity(Long id, String username, String password, List<RoleEntity> roles) {
+	public UserEntity(Long id, String username, String password, Set<RoleEntity> roles) {
 		
 		this(username, password, roles);
 		this.id = id;
@@ -126,18 +126,11 @@ public class UserEntity {
 		this.credentialNoExpired = credentialNoExpired;
 	}
 
-	public List<RoleEntity> getRoles() {
+	public Set<RoleEntity> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(List<RoleEntity> roles) {
+	public void setRoles(Set<RoleEntity> roles) {
 		this.roles = roles;
 	}
-
-	@Override
-	public String toString() {
-		return "UserEntity [id=" + id + ", username=" + username + ", password=" + password + ", isEnabled=" + isEnabled
-				+ ", accountNoExpired=" + accountNoExpired + ", accountNoLocked=" + accountNoLocked
-				+ ", credentialNoExpired=" + credentialNoExpired + ", rolesSize=" + roles.size() + "]";
-	}    
 }

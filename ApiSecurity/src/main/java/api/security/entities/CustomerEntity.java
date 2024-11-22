@@ -41,7 +41,7 @@ public class CustomerEntity {
 	private String email;
 	
 	@NotBlank(message = "el campo no debe ser null o solo contener espacios en blanco")
-	@Size(min = 10, max = 20, message = "ingrese 10 caracteres como mínimo y 20 como máximo")
+	@Size(min = 8, max = 20, message = "ingrese 8 caracteres como mínimo y 20 como máximo")
 	private String phone;
 
 	public CustomerEntity() {
@@ -59,6 +59,12 @@ public class CustomerEntity {
 		this(firstName, lastName, nationality, address);
 		this.email = email;
 		this.phone = phone;
+	}
+	
+	public CustomerEntity(Long id, String firstName, String lastName, NationalityEntity nationality, String address, String email,
+			String phone) {
+		this(firstName, lastName, nationality, address, email, phone);
+		this.id = id;
 	}
 
 	public String getFirstName() {
@@ -112,11 +118,4 @@ public class CustomerEntity {
 	public void setNationality(NationalityEntity nationality) {
 		this.nationality = nationality;
 	}
-
-	@Override
-	public String toString() {
-		return "Customer [customerId=" + id + ", firstName=" + firstName + ", lastName=" + lastName
-				+ ", nationality=" + nationality + ", address=" + address + ", email=" + email + ", phone=" + phone
-				+ "]";
-	}	
 }

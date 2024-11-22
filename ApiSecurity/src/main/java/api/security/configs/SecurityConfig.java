@@ -30,13 +30,13 @@ public class SecurityConfig {
 			        auth.requestMatchers(HttpMethod.POST, "/**").hasAnyRole("ADMIN", "DEVELOPER", "USER");
 	                auth.requestMatchers(HttpMethod.GET, "/api/**").hasAnyRole("ADMIN", "DEVELOPER", "USER", "INVITED");
 	                auth.requestMatchers(HttpMethod.PUT, "/api/**").hasAnyRole("ADMIN", "DEVELOPER");
-	                auth.requestMatchers(HttpMethod.DELETE, "/api/**").hasRole("ADMIN");
+	                auth.requestMatchers(HttpMethod.DELETE, "/api/**").hasAnyRole("ADMIN");
 	                auth.anyRequest().authenticated(); 
 	            })
 				.httpBasic(Customizer.withDefaults()).build();
 	}
 
-	/*
+	/* Se utiliza para crear usuarios, solo en memoria
 	@Bean
     InMemoryUserDetailsManager userDetailsService() {
         UserDetails user1 = User.withUsername("oscar")

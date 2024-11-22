@@ -8,4 +8,5 @@ import api.security.entities.LoanEntity;
 @Repository
 public interface ILoanRepository extends CrudRepository<LoanEntity, Long> {
 
+
 }

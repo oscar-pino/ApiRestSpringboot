@@ -1,6 +1,6 @@
 package api.security.dto;
 
-import java.util.List;
+import java.util.Set;
 
 import api.security.entities.PermissionEntity;
 import api.security.entities.enums.RoleEnum;
@@ -10,8 +10,8 @@ public class RoleDTO {
 	    private Long id;
 
 	    private RoleEnum roleEnum;
-	    
-	    private List<PermissionEntity> permissionList;
+
+	    private Set<PermissionEntity> permissionList;
 
 		public RoleDTO() {
 			
@@ -21,9 +21,14 @@ public class RoleDTO {
 			this.roleEnum = roleEnum;
 		}
 
-		public RoleDTO(RoleEnum roleEnum, List<PermissionEntity> permissionList) {
+		public RoleDTO(RoleEnum roleEnum, Set<PermissionEntity> permissionList) {
 			this(roleEnum);
 			this.permissionList = permissionList;
+		}
+		
+		public RoleDTO(Long id, RoleEnum roleEnum, Set<PermissionEntity> permissionList) {
+			this(roleEnum, permissionList);
+			this.id=id;
 		}
 
 		public Long getId() {
@@ -42,16 +47,16 @@ public class RoleDTO {
 			this.roleEnum = roleEnum;
 		}
 
-		public List<PermissionEntity> getPermissionList() {
+		public Set<PermissionEntity> getPermissionList() {
 			return permissionList;
 		}
 
-		public void setPermissionList(List<PermissionEntity> permissionList) {
+		public void setPermissionList(Set<PermissionEntity> permissionList) {
 			this.permissionList = permissionList;
 		}
 
 		@Override
 		public String toString() {
-			return "RoleEntity [id=" + id + ", roleEnum=" + roleEnum + ", permissionListSize=" + permissionList.size() + "]";
-		}    
+			return "RoleDTO [id=" + id + ", roleEnum=" + roleEnum + ", permissionList=" + permissionList + "]";
+		}  		
 }

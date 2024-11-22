@@ -1,33 +1,50 @@
 package api.security.dto;
 
-import java.util.Date;
-
-import api.security.entities.LoanEntity;
+import java.time.LocalDate;
 
 public class ReturnDTO {
 
-	private Long id;		
+	private Long id;	
 
-	private LoanEntity loan;
-	
-	private Date returnDate;
+	private LocalDate returnDate;
 
 	private Float penalty;
+
+	private int daysLate;
 
 	public ReturnDTO() {
 	}	
 
-	public ReturnDTO(LoanEntity loan, Date returnDate, Float penalty) {
-		this.loan = loan;
+	public ReturnDTO(LocalDate returnDate, Float penalty) {
 		this.returnDate = returnDate;
 		this.penalty = penalty;
 	}
-
-	public Date getreturnDate() {
+	
+	public ReturnDTO(LocalDate returnDate, Float penalty, int daysLate) {
+		this(returnDate, penalty);
+		this.daysLate = daysLate;
+	}
+	
+	public ReturnDTO(Long id, LocalDate returnDate, Float penalty, int daysLate) {
+		this(returnDate, penalty, daysLate);
+		this.id = id;
+	}
+	
+	public Long getId() {
+		return id;
+	}
+	
+	public void setId(Long id) {
+		this.id=id;
+	}
+	
+	
+	
+	public LocalDate getReturnDate() {
 		return returnDate;
 	}
 
-	public void setReturnDate(Date returnDate) {
+	public void setReturnDate(LocalDate returnDate) {
 		this.returnDate = returnDate;
 	}
 
@@ -37,27 +54,19 @@ public class ReturnDTO {
 
 	public void setPenalty(Float penalty) {
 		this.penalty = penalty;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public LoanEntity getLoan() {
-		return loan;
-	}
-
-	public void setLoan(LoanEntity loan) {
-		this.loan = loan;
-	}
-
-	public Date getReturnDate() {
-		return returnDate;
-	}	
+	}		
 	
+	public int getDaysLate() {
+		return daysLate;
+	}
+
+	public void setDaysLate(int daysLate) {
+		this.daysLate = daysLate;
+	}
+
 	@Override
 	public String toString() {
-		return "Return [returnId=" + id + ", loan=" + loan + ", returnDate=" + returnDate + ", penalty=" + penalty
+		return "ReturnDTO [id=" + id + ", returnDate=" + returnDate + ", penalty=" + penalty + ", daysLate=" + daysLate
 				+ "]";
-	}
+	}	
 }

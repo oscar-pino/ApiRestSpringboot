@@ -2,7 +2,6 @@ package api.security.repositories;
 
 import java.util.Optional;
 
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,7 +14,5 @@ public interface INationalityRepository extends CrudRepository<NationalityEntity
 	Optional<NationalityEntity> findByName(String name);
 
 	Optional<NationalityEntity> findById(Long id);
-	
-	@Query(value = "SELECT MAX(id) FROM nationalities", nativeQuery = true)
-	Long getLastId();
+
 }

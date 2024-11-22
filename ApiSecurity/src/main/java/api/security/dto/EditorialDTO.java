@@ -1,8 +1,8 @@
 package api.security.dto;
 
-import java.util.Date;
+import java.time.LocalDate;
 
-public class PublisherDTO {		
+public class EditorialDTO {		
 
 	private Long id;
 
@@ -16,12 +16,12 @@ public class PublisherDTO {
 
 	private String email;
 
-	private Date foundingDate;
+	private LocalDate foundingDate;
 
-	public PublisherDTO() {
+	public EditorialDTO() {
 	}
 
-	public PublisherDTO(String name, String address, String phone, String webSite, String email, Date foundingDate) {
+	public EditorialDTO(String name, String address, String phone, String webSite, String email, LocalDate foundingDate) {
 		this.name = name;
 		this.address = address;
 		this.phone = phone;
@@ -30,8 +30,8 @@ public class PublisherDTO {
 		this.foundingDate = foundingDate;
 	}
 
-	public PublisherDTO(Long id, String name, String address, String phone, String webSite, String email,
-			Date foundingDate) {
+	public EditorialDTO(Long id, String name, String address, String phone, String webSite, String email,
+			LocalDate foundingDate) {
 		this(name, address, phone, webSite, email, foundingDate);
 		this.id = id;
 	}
@@ -76,11 +76,11 @@ public class PublisherDTO {
 		this.email = email;
 	}
 
-	public Date getFoundingDate() {
+	public LocalDate getFoundingDate() {
 		return foundingDate;
 	}
 
-	public void setFoundingDate(Date foundingDate) {
+	public void setFoundingDate(LocalDate foundingDate) {
 		this.foundingDate = foundingDate;
 	}
 
@@ -90,7 +90,7 @@ public class PublisherDTO {
 
 	@Override
 	public String toString() {
-		return "Publisher [publisherId=" + id + ", name=" + name + ", address=" + address + ", phone=" + phone
-				+ ", webSite=" + webSite + ", email=" + email + ", foundingDate=" + foundingDate + "]";
-	}
+		return "EditorialDTO [id=" + id + ", name=" + name + ", address=" + address + ", phone=" + phone + ", webSite="
+				+ webSite + ", email=" + email + ", foundingDate=" + foundingDate + "]";
+	}	
 }

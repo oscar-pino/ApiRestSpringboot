@@ -21,6 +21,12 @@ public class CategoryServiceImp implements IDAO<CategoryEntity> {
 		categoryRepository.save(categoryEntity);
 
 	}
+	
+	@Override
+	public List<CategoryEntity> readAll() {
+
+		return (List<CategoryEntity>) categoryRepository.findAll();
+	}
 
 	@Override
 	public Optional<CategoryEntity> readById(Long id) {
@@ -31,13 +37,7 @@ public class CategoryServiceImp implements IDAO<CategoryEntity> {
 	public Optional<CategoryEntity> readByName(String name) {
 
 		return categoryRepository.findByName(name);
-	}
-
-	@Override
-	public List<CategoryEntity> readAll() {
-
-		return (List<CategoryEntity>) categoryRepository.findAll();
-	}
+	}	
 
 	@Override
 	public void update(CategoryEntity categoryEntity) {
@@ -49,11 +49,5 @@ public class CategoryServiceImp implements IDAO<CategoryEntity> {
 	public void deleteById(Long id) {
 
 		categoryRepository.deleteById(id);
-	}
-
-	@Override
-	public Long getLastId() {
-
-		return categoryRepository.getLastId();
 	}
 }

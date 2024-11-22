@@ -106,30 +106,16 @@ public class PermissionController {
 			return ResponseEntity.status(HttpStatus.CONFLICT)
 					.body("ha ocurrido un error!");
 		
-		Long lastId = permissionServicesImp.getLastId();
-		Optional<PermissionEntity> recovered = null;
+		Optional<PermissionEntity> recovered = permissionServicesImp.readById(id);
 
-		if (id < 1 | id > lastId | permissionDTO == null) {
-
-			if (permissionDTO == null)
+		if (permissionDTO.getPermissionEnum() == null) 
 				return ResponseEntity.status(HttpStatus.ACCEPTED).body(("faltan datos."));
-			else
+		else if(!recovered.isPresent())
 				return ResponseEntity.status(HttpStatus.ACCEPTED).body(("no existe permission con id: " + id));
-		}else {
-			
-			recovered = permissionServicesImp.readById(id);
-		}
-		
-		
-		if(recovered.isPresent()) {
 			
 			recovered.get().setPermissionEnum(permissionDTO.getPermissionEnum());
 			permissionServicesImp.update(recovered.get());			
 			return ResponseEntity.status(HttpStatus.CREATED).body(recovered.get().getPermissionEnum() + ", actualizada sastifactoriamente.");
-		}
-			
-		return ResponseEntity.status(HttpStatus.ACCEPTED).body(("ingrese un permission valido!"));
-		
 	}
 	
 	@DeleteMapping("/delete/{id}")

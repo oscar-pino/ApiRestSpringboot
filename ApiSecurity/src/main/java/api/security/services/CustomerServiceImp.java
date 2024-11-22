@@ -3,49 +3,55 @@ package api.security.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import api.security.entities.CustomerEntity;
-import api.security.entities.UserEntity;
+import api.security.repositories.ICustomerRepository;
 
 @Service
 public class CustomerServiceImp implements IDAO<CustomerEntity> {
+	
+	@Autowired
+	private ICustomerRepository customerRepository;
 
 	@Override
-	public void create(CustomerEntity t) {
+	public void create(CustomerEntity customerEntity) {
 		
+		customerRepository.save(customerEntity);		
+	}
 	
+	@Override
+	public List<CustomerEntity> readAll() {
 		
+		return (List<CustomerEntity>)customerRepository.findAll();
 	}
 	
 	@Override
 	public Optional<CustomerEntity> readById(Long id) {
-		// TODO Auto-generated method stub
-		return Optional.empty();
-	}
+		
+		return customerRepository.findById(id);
+	}	
 
-	@Override
-	public List<CustomerEntity> readAll() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public Optional<CustomerEntity> readByEmail(String email) {
+		
+		return customerRepository.findByEmail(email);
+	}	
+
+	public Optional<CustomerEntity> readByPhone(String phone) {
+		
+		return customerRepository.findByPhone(phone);
+	}	
 	
 	@Override
-	public void update(CustomerEntity t) {
-		// TODO Auto-generated method stub
+	public void update(CustomerEntity customerEntity) {
 		
+		customerRepository.save(customerEntity);		
 	}
 
 	@Override
 	public void deleteById(Long id) {
 		
-	
-		
-	}
-
-	@Override
-	public Long getLastId() {
-		// TODO Auto-generated method stub
-		return null;
+		customerRepository.deleteById(id);		
 	}
 }

@@ -1,7 +1,5 @@
 package api.security.entities;
 
-import java.util.Date;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,7 +10,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 
 @Entity
@@ -23,18 +20,19 @@ public class BookEntity {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;	
 	
-	@Column(nullable = false)	
+	@Column(nullable = false, unique = true)	
 	@NotBlank(message = "el campo no debe ser null o solo contener espacios en blanco")
-	@Size(min = 3, max = 20, message = "ingrese 3 caracteres como mínimo y 20 como máximo")
+	@Size(min = 3, max = 50, message = "ingrese 3 caracteres como mínimo y 50 como máximo")
 	private String title;
 	
 	@Column(nullable = false, unique = true)
 	@NotBlank(message = "el campo no debe ser null o solo contener espacios en blanco")
+	@Size(min = 4, max = 10, message = "ingrese 4 caracteres como mínimo y 10 como máximo")
 	private String isbm;
 
 	@ManyToOne
-	@JoinColumn(name = "publisher_id", nullable = false)
-	private PublisherEntity publisher;
+	@JoinColumn(name = "editorial_id", nullable = false)
+	private EditorialEntity editorial;
 
 	@ManyToOne
 	@JoinColumn(name = "category_id", nullable = false)
@@ -44,29 +42,30 @@ public class BookEntity {
 	@JoinColumn(name = "author_id", nullable = false)
 	private AuthorEntity author;
 	
-	@Column(nullable = false)
-	@Past(message = "la fecha debe ser anterior a la fecha actual")
-	private Date publicationYear;
-	
 	@Column(nullable = false)	
-	@Min(value=0, message = "the quantity couldn´t less than zero")
+	@Min(value=0, message = "la cantidad no puede ser menor que cero")
 	private int quantity;
-	
-//	@ManyToMany(mappedBy = "books")
-//	private Set<Loan> loans = new HashSet<>();
 	
 	public BookEntity() {
 	}
+	
+	public BookEntity(String title, String isbm, int quantity) {
+		this.title = title;
+		this.isbm = isbm;
+		this.quantity = quantity;
+	}
 
-	public BookEntity(String title, String isbm, PublisherEntity publisher, CategoryEntity category, AuthorEntity author, Date publicationYear, int quantity) {
-	this.title = title;
-	this.isbm = isbm;
-	this.publisher = publisher;
+	public BookEntity(String title, String isbm, int quantity, EditorialEntity editorial, CategoryEntity category, AuthorEntity author) {
+	this(title, isbm, quantity);
+	this.editorial = editorial;
 	this.category = category;
 	this.author = author;
-	this.publicationYear = publicationYear;
-	this.quantity = quantity;
-}
+	}
+	
+	public BookEntity(Long id, String title, String isbm, int quantity, EditorialEntity editorial, CategoryEntity category, AuthorEntity author) {
+		this(title, isbm, quantity, editorial, category, author);
+		this.id = id;
+		}
 
 	public String getTitle() {
 		return title;
@@ -84,24 +83,16 @@ public class BookEntity {
 		this.isbm = isbm;
 	}
 
-	public Date getPublicationYear() {
-		return publicationYear;
-	}
-
-	public void setPublicationYear(Date publicationYear) {
-		this.publicationYear = publicationYear;
-	}
-
 	public Long getId() {
 		return id;
 	}
 
-	public PublisherEntity getPublisher() {
-		return publisher;
+	public EditorialEntity getEditorial() {
+		return editorial;
 	}
 
-	public void setPublisher(PublisherEntity publisher) {
-		this.publisher = publisher;
+	public void setEditorial(EditorialEntity editorial) {
+		this.editorial = editorial;
 	}
 
 	public CategoryEntity getCategory() {
@@ -120,10 +111,11 @@ public class BookEntity {
 		this.author = author;
 	}
 
-	@Override
-	public String toString() {
-		return "Book [bookId=" + id + ", title=" + title + ", isbm=" + isbm + ", publisher=" + publisher
-				+ ", category=" + category + ", author=" + author.getFirstName() + ", publicationYear=" + publicationYear
-				+ ", quantity=" + quantity + "]";
+	public int getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
 	}	
 }

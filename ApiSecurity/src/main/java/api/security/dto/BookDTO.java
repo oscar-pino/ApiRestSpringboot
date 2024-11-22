@@ -1,10 +1,17 @@
 package api.security.dto;
 
-import java.util.Date;
-
 import api.security.entities.AuthorEntity;
 import api.security.entities.CategoryEntity;
-import api.security.entities.PublisherEntity;
+import api.security.entities.EditorialEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 public class BookDTO {
 
@@ -14,31 +21,34 @@ public class BookDTO {
 
 	private String isbm;
 
-	private PublisherEntity publisher;
+	private EditorialEntity editorial;
 
 	private CategoryEntity category;
 
 	private AuthorEntity author;
 
-	private Date publicationYear;
-
 	private int quantity;
-	
-//	@ManyToMany(mappedBy = "books")
-//	private Set<Loan> loans = new HashSet<>();
 	
 	public BookDTO() {
 	}
+	
+	public BookDTO(String title, String isbm, int quantity) {
+		this.title = title;
+		this.isbm = isbm;
+		this.quantity = quantity;
+	}
 
-	public BookDTO(String title, String isbm, PublisherEntity publisher, CategoryEntity category, AuthorEntity author, Date publicationYear, int quantity) {
-	this.title = title;
-	this.isbm = isbm;
-	this.publisher = publisher;
+	public BookDTO(String title, String isbm, int quantity, EditorialEntity editorial, CategoryEntity category, AuthorEntity author) {
+	this(title, isbm, quantity);
+	this.editorial = editorial;
 	this.category = category;
 	this.author = author;
-	this.publicationYear = publicationYear;
-	this.quantity = quantity;
-}
+	}
+	
+	public BookDTO(Long id, String title, String isbm, int quantity, EditorialEntity editorial, CategoryEntity category, AuthorEntity author) {
+		this(title, isbm, quantity, editorial, category, author);
+		this.id = id;
+		}
 
 	public String getTitle() {
 		return title;
@@ -56,24 +66,16 @@ public class BookDTO {
 		this.isbm = isbm;
 	}
 
-	public Date getPublicationYear() {
-		return publicationYear;
-	}
-
-	public void setPublicationYear(Date publicationYear) {
-		this.publicationYear = publicationYear;
-	}
-
 	public Long getId() {
 		return id;
 	}
 
-	public PublisherEntity getPublisher() {
-		return publisher;
+	public EditorialEntity getEditorial() {
+		return editorial;
 	}
 
-	public void setPublisher(PublisherEntity publisher) {
-		this.publisher = publisher;
+	public void setEditorial(EditorialEntity editorial) {
+		this.editorial = editorial;
 	}
 
 	public CategoryEntity getCategory() {
@@ -92,10 +94,17 @@ public class BookDTO {
 		this.author = author;
 	}
 
+	public int getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
+
 	@Override
 	public String toString() {
-		return "Book [bookId=" + id + ", title=" + title + ", isbm=" + isbm + ", publisher=" + publisher
-				+ ", category=" + category + ", author=" + author.getFirstName() + ", publicationYear=" + publicationYear
-				+ ", quantity=" + quantity + "]";
+		return "BookDTO [id=" + id + ", title=" + title + ", isbm=" + isbm + ", editorial=" + editorial + ", category="
+				+ category + ", author=" + author + ", quantity=" + quantity + "]";
 	}	
 }

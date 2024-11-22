@@ -1,7 +1,5 @@
 package api.security.dto;
 
-import java.util.Date;
-
 import api.security.entities.NationalityEntity;
 
 public class AuthorDTO {
@@ -18,23 +16,32 @@ public class AuthorDTO {
 
 	private String email;
 
-	private Date birthDate;
-
 	public AuthorDTO() {
 	}	
 	
-	public AuthorDTO(String firstName, String lastName, NationalityEntity nationality, Date birthDate) {
+	public AuthorDTO(String firstName, String lastName, NationalityEntity nationality) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.nationality = nationality;
-		this.birthDate = birthDate;
 	}
-
-	public AuthorDTO(String firstName, String lastName, NationalityEntity nationality, String webSite, String email,
-			Date birthDate) {
-		this(firstName, lastName, nationality, birthDate);
+	
+	public AuthorDTO(String firstName, String lastName, NationalityEntity nationality, String webSite, String email) {
+		this(firstName, lastName, nationality);
 		this.webSite = webSite;
 		this.email = email;
+	}
+	
+	public AuthorDTO(Long id, String firstName, String lastName, NationalityEntity nationality, String webSite, String email) {
+		this(firstName, lastName, nationality, webSite, email);		
+		this.id = id;
+	}	
+	
+	public Long getId() {
+		return id;
+	}	
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getFirstName() {
@@ -68,22 +75,19 @@ public class AuthorDTO {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-
-	public Date getBirthDate() {
-		return birthDate;
+	
+	
+	public NationalityEntity getNationality() {
+		return nationality;
 	}
 
-	public void setBirthDate(Date birthDate) {
-		this.birthDate = birthDate;
-	}
-
-	public Long getId() {
-		return id;
+	public void setNationality(NationalityEntity nationality) {
+		this.nationality = nationality;
 	}
 
 	@Override
 	public String toString() {
-		return "Author [authorId=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", nationality="
-				+ nationality + ", webSite=" + webSite + ", email=" + email + ", birthDate=" + birthDate + "]";
-	}
+		return "AuthorDTO [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", nationality="
+				+ nationality + ", webSite=" + webSite + ", email=" + email + "]";
+	}	
 }

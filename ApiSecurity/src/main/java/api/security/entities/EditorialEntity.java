@@ -1,6 +1,6 @@
 package api.security.entities;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,8 +15,8 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 @Entity
-@Table(name = "publishers")
-public class PublisherEntity {
+@Table(name = "editorials")
+public class EditorialEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,24 +27,20 @@ public class PublisherEntity {
 	@Size(min = 5, max = 20, message = "ingrese 5 caracteres como mínimo y 20 como máximo")
 	private String name;
 
-	@Column(unique = true)
 	@NotBlank(message = "el campo no debe ser null o solo contener espacios en blanco")
 	@Size(max = 50, message = "ingrese 50 caracteres como máximo")
 	private String address;
 
-	@Column(unique = true)
 	@NotBlank(message = "el campo no debe ser null o solo contener espacios en blanco")
-	@Size(min = 10, max = 20, message = "ingrese 10 caracteres como mínimo y 20 como máximo")
+	@Size(min = 8, max = 20, message = "ingrese 8 caracteres como mínimo y 20 como máximo")
 	private String phone;
 
-	@Column(name = "web_site", unique = true)
 	@NotBlank(message = "el campo no debe ser null o solo contener espacios en blanco")
 	@Size(max = 30, message = "ingrese 30 caracteres como máximo")
     @Pattern(regexp = "^(https?://)?([\\w-]+\\.)+[\\w-]+(/[-\\w@:%_\\+.~#?&//=]*)?$", 
              message = "el sitio web debe tener un formato válido")
 	private String webSite;
 
-	@Column(unique = true)
 	@NotBlank(message = "el campo no debe ser null o solo contener espacios en blanco")
 	@Size(max = 30, message = "ingrese 30 caracteres como máximo")
 	@Email(message = "el email debe tener un formato válido")
@@ -52,12 +48,12 @@ public class PublisherEntity {
 
 	@Column(name = "founding_date")
 	@Past(message = "la fecha debe ser anterior a la fecha actual")
-	private Date foundingDate;
+	private LocalDate foundingDate;
 
-	public PublisherEntity() {
+	public EditorialEntity() {
 	}
 
-	public PublisherEntity(String name, String address, String phone, String webSite, String email, Date foundingDate) {
+	public EditorialEntity(String name, String address, String phone, String webSite, String email, LocalDate foundingDate) {
 		this.name = name;
 		this.address = address;
 		this.phone = phone;
@@ -66,8 +62,8 @@ public class PublisherEntity {
 		this.foundingDate = foundingDate;
 	}
 
-	public PublisherEntity(Long id, String name, String address, String phone, String webSite, String email,
-			Date foundingDate) {
+	public EditorialEntity(Long id, String name, String address, String phone, String webSite, String email,
+			LocalDate foundingDate) {
 		this(name, address, phone, webSite, email, foundingDate);
 		this.id = id;
 	}
@@ -112,21 +108,15 @@ public class PublisherEntity {
 		this.email = email;
 	}
 
-	public Date getFoundingDate() {
+	public LocalDate getFoundingDate() {
 		return foundingDate;
 	}
 
-	public void setFoundingDate(Date foundingDate) {
+	public void setFoundingDate(LocalDate foundingDate) {
 		this.foundingDate = foundingDate;
 	}
 
 	public Long getId() {
 		return id;
-	}
-
-	@Override
-	public String toString() {
-		return "Publisher [publisherId=" + id + ", name=" + name + ", address=" + address + ", phone=" + phone
-				+ ", webSite=" + webSite + ", email=" + email + ", foundingDate=" + foundingDate + "]";
 	}
 }

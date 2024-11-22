@@ -45,7 +45,7 @@ public class UserController {
 						.body(userDTO.getUsername()+", ya existe, pruebe con otro.");
 			} else {
 				userServiceImp
-						.create(new UserEntity(userDTO.getUsername(), userDTO.getPassword(), userDTO.getRoles().stream().toList()));
+						.create(new UserEntity(userDTO.getUsername(), userDTO.getPassword(), userDTO.getRoles()));
 				return ResponseEntity.status(HttpStatus.CREATED)
 						.body(userDTO.getUsername() + ", creado sastifactoriamente.");
 			}
@@ -95,43 +95,35 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.CONFLICT)
 					.body("ha ocurrido un error: "+result.getFieldError().getDefaultMessage());
 		
+		boolean repeated = false;
+		Optional<UserEntity> recovered = userServiceImp.readById(id);		
 		List<UserEntity> users = userServiceImp.readAll();
-		Long lastId = userServiceImp.getLastId();
 		
-
-		if (id < 1 | id > lastId | userDTO.getUsername().isEmpty()
-				| userDTO.getPassword().isEmpty() | userDTO.getRoles().isEmpty()) {
-
-			if (userDTO.getUsername().isEmpty() | userDTO.getPassword().isEmpty() | userDTO.getRoles().isEmpty())
+		if (userDTO.getUsername().isEmpty() | userDTO.getPassword().isEmpty() | userDTO.getRoles().isEmpty()) 
 				return ResponseEntity.status(HttpStatus.ACCEPTED).body(("faltan datos."));
-			else
+		else if(!recovered.isPresent())
 				return ResponseEntity.status(HttpStatus.ACCEPTED).body(("no existe user con id: " + id));
-		}
-		boolean repeat = false;
-
+		else if(userServiceImp.readById(id).isPresent()) {
 		
-		UserEntity recovered = userServiceImp.readById(id).get();		
-
-		for (UserEntity ue : users) {
-
-			if (ue.getId() != id) {
-				if (userDTO.getUsername().equalsIgnoreCase(ue.getUsername())) {
-					repeat = true;
-					break;
-				}
-			}
+		repeated = users.stream().anyMatch(u -> u != recovered.get() & u.getUsername().equalsIgnoreCase(userDTO.getUsername()));
+		
 		}
 
-		if (repeat) {
+		if (repeated) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(userDTO.getUsername()+" ya existe, pruebe con otro.");
 		} else {
-			recovered.setId(userDTO.getId());
-			recovered.setUsername(userDTO.getUsername());
-			recovered.setPassword(userDTO.getPassword());
-			recovered.setRoles(userDTO.getRoles());
 			
-			userServiceImp.update(recovered);
-			repeat = false;
+			UserEntity user = recovered.get();
+			user.setId(userDTO.getId());
+			user.setUsername(userDTO.getUsername());
+			user.setPassword(userDTO.getPassword());
+			user.setRoles(userDTO.getRoles());
+			user.setAccountNoExpired(userDTO.isAccountNoExpired());
+			user.setAccountNoLocked(userDTO.isAccountNoLocked());
+			user.setCredentialNoExpired(userDTO.isCredentialNoExpired());
+			user.setEnabled(userDTO.isEnabled());
+			
+			userServiceImp.update(user);
 			return ResponseEntity.status(HttpStatus.CREATED)
 					.body(userDTO.getUsername() + ", actualizado sastifactoriamente.");
 		}
@@ -150,5 +142,4 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body("no se ha encontrado user con id: " + id + ".");
 	}
-
 }

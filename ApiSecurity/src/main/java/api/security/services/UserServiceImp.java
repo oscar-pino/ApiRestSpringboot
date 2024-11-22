@@ -2,8 +2,10 @@ package api.security.services;
 
 import java.util.List;
 import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import api.security.entities.UserEntity;
 import api.security.repositories.IUserRepository;
 
@@ -17,6 +19,12 @@ public class UserServiceImp implements IDAO<UserEntity> {
 	public void create(UserEntity userEntity) {
 	
 		userRepository.save(userEntity);
+	}	
+
+	@Override
+	public List<UserEntity> readAll() {
+		
+		return (List<UserEntity>)userRepository.findAll();
 	}
 
 	@Override
@@ -31,12 +39,6 @@ public class UserServiceImp implements IDAO<UserEntity> {
 	}
 	
 	@Override
-	public List<UserEntity> readAll() {
-		
-		return userRepository.getAllUsers();
-	}
-	
-	@Override
 	public void update(UserEntity userEntity) {
 		
 		userRepository.save(userEntity);
@@ -46,11 +48,5 @@ public class UserServiceImp implements IDAO<UserEntity> {
 	public void deleteById(Long id) {		
 
 		userRepository.deleteById(id);
-	}
-
-	@Override
-	public Long getLastId() {
-		
-		return userRepository.getLastId();
 	}
 }

@@ -20,6 +20,12 @@ public class NationalityServiceImp implements IDAO<NationalityEntity> {
 		
 		nationalityRepository.save(nation);
 	}
+	
+	@Override
+	public List<NationalityEntity> readAll() {
+
+		return (List<NationalityEntity>) nationalityRepository.findAll();
+	}
 
 	@Override
 	public Optional<NationalityEntity> readById(Long id) {
@@ -32,12 +38,7 @@ public class NationalityServiceImp implements IDAO<NationalityEntity> {
 
 		return nationalityRepository.findByName(name);
 	}
-
-	@Override
-	public List<NationalityEntity> readAll() {
-
-		return (List<NationalityEntity>) nationalityRepository.findAll();
-	}
+	
 	
 	@Override
 	public void update(NationalityEntity nationality) {
@@ -49,11 +50,5 @@ public class NationalityServiceImp implements IDAO<NationalityEntity> {
 	public void deleteById(Long id) {
 		
 		nationalityRepository.deleteById(id);
-	}
-
-	@Override
-	public Long getLastId() {
-		
-		return nationalityRepository.getLastId();
 	}
 }

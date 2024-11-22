@@ -4,9 +4,9 @@ import api.security.entities.enums.PermissionEnum;
 
 public class PermissionDTO {
 
-    private Long id;
+	private Long id;
 
-    private PermissionEnum permissionEnum;
+	private PermissionEnum permissionEnum;
 
 	public PermissionDTO() {
 	}
@@ -35,4 +35,9 @@ public class PermissionDTO {
 	public void setPermissionEnum(PermissionEnum permissionEnum) {
 		this.permissionEnum = permissionEnum;
 	}
+
+	@Override
+	public String toString() {
+		return "PermissionDTO [id=" + id + ", permissionEnum=" + permissionEnum + "]";
+	}	
 }

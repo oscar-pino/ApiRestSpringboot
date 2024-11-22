@@ -14,8 +14,6 @@ public interface IRoleRepository extends CrudRepository<RoleEntity, Long> {
 
 	@Query(value = "SELECT * FROM roles r WHERE r.role_name = :role_name", nativeQuery = true)	
 	List<RoleEntity> findAllByName(@Param("role_name") String role_name);
-	
-	@Query(value = "SELECT MAX(id) FROM roles", nativeQuery = true)
-	Long getLastId();
+
 	
 }
