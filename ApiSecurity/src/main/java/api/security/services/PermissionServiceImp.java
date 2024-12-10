@@ -4,11 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import api.security.entities.PermissionEntity;
-import api.security.entities.enums.PermissionEnum;
 import api.security.repositories.IPermissionRepository;
 
 @Service
@@ -27,7 +25,7 @@ public class PermissionServiceImp implements IDAO<PermissionEntity> {
 	@Override
 	public List<PermissionEntity> readAll() {
 
-		return permissionRepository.getAllPermissions();
+		return (List<PermissionEntity>)permissionRepository.findAll();
 	}
 
 	@Override
@@ -37,7 +35,7 @@ public class PermissionServiceImp implements IDAO<PermissionEntity> {
 	
 	}
 	
-	public List<PermissionEntity> readAllPermissionByName(String name){
+	public List<PermissionEntity> readAllPermissionByName(String name){		
 		
 		return permissionRepository.findAllPermissionByName(name);
 	}	
@@ -52,10 +50,5 @@ public class PermissionServiceImp implements IDAO<PermissionEntity> {
 	public void deleteById(Long id) {
 		
 		permissionRepository.deleteById(id);
-	}
-	
-	public List<PermissionEntity> getUniquePermissions(){
-		
-		return permissionRepository.getUniquePermissions();
 	}
 }

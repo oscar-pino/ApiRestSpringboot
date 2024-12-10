@@ -6,10 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import api.security.entities.AuthorEntity;
 import api.security.entities.BookEntity;
-import api.security.entities.CategoryEntity;
-import api.security.entities.EditorialEntity;
 import api.security.repositories.IBookRepository;
 
 @Service
@@ -46,19 +43,19 @@ public class BookServiceImp implements IDAO<BookEntity> {
 		return bookRepository.findByIsbm(isbm);
 	}	
 	
-	public List<BookEntity> readAllByEditorial(EditorialEntity editorial) {
+	public List<BookEntity> readAllByEditorialName(String editorialName) {
 
-		return (List<BookEntity>) bookRepository.findByEditorial(editorial);
+		return (List<BookEntity>) bookRepository.findAllByEditorialName(editorialName);
 	}	
 
-	public List<BookEntity> readAllByAuthor(AuthorEntity author) {
+	public List<BookEntity> readAllByAuthorName(String authorName) {
 
-		return (List<BookEntity>) bookRepository.findByAuthor(author);
+		return (List<BookEntity>) bookRepository.findAllByAuthorName(authorName);
 	}
 	
-	public List<BookEntity> readAllByCategory(CategoryEntity category){
+	public List<BookEntity> readAllByCategoryName(String categoryName){
 		
-		return (List<BookEntity>) bookRepository.findByCategory(category);
+		return (List<BookEntity>) bookRepository.findAllByCategoryName(categoryName);
 	}
 
 	@Override

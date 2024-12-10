@@ -26,11 +26,10 @@ public class SecurityConfig {
 				.csrf(csrf -> csrf.disable())
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> {
-					
-			        auth.requestMatchers(HttpMethod.POST, "/**").hasAnyRole("ADMIN", "DEVELOPER", "USER");
-	                auth.requestMatchers(HttpMethod.GET, "/api/**").hasAnyRole("ADMIN", "DEVELOPER", "USER", "INVITED");
-	                auth.requestMatchers(HttpMethod.PUT, "/api/**").hasAnyRole("ADMIN", "DEVELOPER");
-	                auth.requestMatchers(HttpMethod.DELETE, "/api/**").hasAnyRole("ADMIN");
+					auth.requestMatchers(HttpMethod.GET).hasAnyRole("ADMIN", "DEVELOPER", "USER", "INVITED");
+					auth.requestMatchers(HttpMethod.POST).hasAnyRole("ADMIN", "DEVELOPER", "USER");
+	                auth.requestMatchers(HttpMethod.PUT).hasAnyRole("ADMIN", "DEVELOPER");
+	                auth.requestMatchers(HttpMethod.DELETE).hasAnyRole("ADMIN");
 	                auth.anyRequest().authenticated(); 
 	            })
 				.httpBasic(Customizer.withDefaults()).build();

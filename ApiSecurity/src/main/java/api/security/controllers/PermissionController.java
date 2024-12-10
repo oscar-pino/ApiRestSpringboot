@@ -1,6 +1,8 @@
 package api.security.controllers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,111 +27,117 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/permissions")
 public class PermissionController {
-	
+
 	@Autowired
-	private PermissionServiceImp permissionServicesImp;
-	
+	private PermissionServiceImp permissionServiceImp;
+
 	@PostMapping("/create")
-	public ResponseEntity<?> create(@Valid @RequestBody PermissionDTO permissionDTO, BindingResult result) {	
-		
+	public ResponseEntity<?> create(@Valid @RequestBody PermissionDTO permissionDTO, BindingResult result) {
+
 		if (result.hasErrors())
-			return ResponseEntity.status(HttpStatus.CONFLICT)
-					.body("ha ocurrido un error!");
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("ha ocurrido un error!");
 		
-		PermissionEnum permission = null;
-			 
-			 if(permissionDTO == null) {
-					
-					return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("faltan datos.");					
-				}
-			
-	            
-				 permission = PermissionEnum.valueOf(permissionDTO.getPermissionEnum().name().toUpperCase());
-				 
-				 if(permission == null)
-					 return ResponseEntity.badRequest().body("no existe permission: " + permissionDTO.getPermissionEnum().name().toUpperCase());
-				 
-				
-	            permissionServicesImp.create(new PermissionEntity(permission));
-				return ResponseEntity.status(HttpStatus.CREATED)
-						.body(permissionDTO.getPermissionEnum() + ", creado sastifactoriamente.");	 	            
-	     		
-	}
+		boolean emptyFields = permissionDTO == null | permissionDTO.getPermissionEnum().name().isBlank();
 
-	
-	@GetMapping("/read/id/{id}")
-	public ResponseEntity<?> readById(@PathVariable Long id) {
-
-		Optional<PermissionEntity> recovered = permissionServicesImp.readById(id);
-
-		if (recovered.isPresent()) {
-			PermissionDTO permissionDTO = new PermissionDTO(id, recovered.get().getPermissionEnum());
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body(permissionDTO);
+		if (emptyFields)
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("faltan datos.");
+		else if (PermissionEnum.valueOf(permissionDTO.getPermissionEnum().name().toUpperCase()) == null)
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("debe ingresar un permiso valido");
+		else {
+			permissionServiceImp.create(new PermissionEntity(permissionDTO.getPermissionEnum()));
+			return ResponseEntity.status(HttpStatus.CREATED)
+					.body(permissionDTO.getPermissionEnum().name() + " creado correctamente.");
 		}
-
-		return ResponseEntity.status(HttpStatus.NOT_FOUND)
-				.body("no se ha encontrado permission con el id: " + id + ".");
-	}
-	
-	@GetMapping("/read/all/name/{name}")
-	public ResponseEntity<?> readByName(@PathVariable String name) {
-
-		List<PermissionEntity> permissions = permissionServicesImp.readAllPermissionByName(name);
-
-		if (!permissions.isEmpty()) {
-			List<PermissionDTO> permissionsDTO = permissions.stream().map(p -> new PermissionDTO(p.getId(), p.getPermissionEnum())).toList();
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body(permissionsDTO);
-		}
-
-		return ResponseEntity.status(HttpStatus.NOT_FOUND)
-				.body("no se han encontrado permission con el name: " + name + ".");
 	}
 
 	@GetMapping("/read/all")
 	public ResponseEntity<?> readAll() {
 
-		List<PermissionEntity> permissions = permissionServicesImp.readAll();
-				
-		if (!permissions.isEmpty()) {
-			
-			permissions.stream().map(p -> new PermissionDTO(p.getId(), p.getPermissionEnum()));
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body(permissions);
-		}
+		List<PermissionDTO> permissions = permissionServiceImp.readAll().stream()
+				.map(p -> new PermissionDTO(p.getId(), p.getPermissionEnum())).toList();
 
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("no se han encontrado roles.");
+		if (permissions.size() > 0)
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(permissions);
+
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("no se han encontrado permisos.");
+	}
+
+	@GetMapping("/read/id/{id}")
+	public ResponseEntity<?> readById(@PathVariable Long id) {
+
+		Optional<PermissionEntity> recovered = permissionServiceImp.readById(id);
+
+		if (recovered.isPresent())
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(recovered.get());
+
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("no se ha encontrado permiso con id: " + id + ".");
+	}
+
+	@GetMapping("/read/all/name/{name}")
+	public ResponseEntity<?> readAllByName(@PathVariable String name) {
+
+		List<PermissionDTO> permissions = permissionServiceImp.readAllPermissionByName(name).stream()
+				.map(p -> new PermissionDTO(p.getId(), p.getPermissionEnum())).toList();		
+
+		if (permissions.size() > 0)
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(permissions);
+
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("no se han encontrado permisos con el nombre "+name+".");
+	}
+
+	@GetMapping("/read/unique")
+	public ResponseEntity<?> readUnique() {
+
+		Map<Long,String> permissions = new HashMap<Long, String>();
+
+		permissionServiceImp.readAll().forEach(p -> {
+			if (!permissions.containsValue(p.getPermissionEnum().name()))
+				permissions.put(p.getId(), p.getPermissionEnum().name()); // setea el id de la primera ocurrencia en el Map
+		});
+
+		if (permissions.size() > 0)
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(permissions);
+
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("no se han encontrado permisos.");
 	}
 
 	@PutMapping("/update/{id}")
-	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody PermissionDTO permissionDTO, BindingResult result) {
-		
-		if (result.hasErrors())
-			return ResponseEntity.status(HttpStatus.CONFLICT)
-					.body("ha ocurrido un error!");
-		
-		Optional<PermissionEntity> recovered = permissionServicesImp.readById(id);
+	public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody PermissionDTO permissionDTO,
+			BindingResult result) {
 
-		if (permissionDTO.getPermissionEnum() == null) 
-				return ResponseEntity.status(HttpStatus.ACCEPTED).body(("faltan datos."));
-		else if(!recovered.isPresent())
-				return ResponseEntity.status(HttpStatus.ACCEPTED).body(("no existe permission con id: " + id));
-			
-			recovered.get().setPermissionEnum(permissionDTO.getPermissionEnum());
-			permissionServicesImp.update(recovered.get());			
-			return ResponseEntity.status(HttpStatus.CREATED).body(recovered.get().getPermissionEnum() + ", actualizada sastifactoriamente.");
+		if (result.hasErrors())
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("ha ocurrido un error!");
+		
+		boolean emptyFields = permissionDTO.getPermissionEnum() == null | permissionDTO.getPermissionEnum().name().isBlank();
+		Optional<PermissionEntity> recovered = permissionServiceImp.readById(id);
+
+		if (!recovered.isPresent())
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("no se han encontrado permiso con id: "+id+".");
+		else if (emptyFields)
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("faltan datos.");
+		
+		else if (PermissionEnum.valueOf(permissionDTO.getPermissionEnum().name().toUpperCase()) == null)
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("debe ingresar un permiso valido");
+		else {
+
+			PermissionEntity permission = recovered.get();
+			permission.setPermissionEnum(permissionDTO.getPermissionEnum());
+			permissionServiceImp.create(permission);
+			return ResponseEntity.status(HttpStatus.CREATED)
+					.body(permissionDTO.getPermissionEnum().name() + " actualizado correctamente.");
+		}
 	}
-	
+
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<?> deleteById(@PathVariable Long id) {
 
-		Optional<PermissionEntity> recovered = permissionServicesImp.readById(id);		
+		Optional<PermissionEntity> recovered = permissionServiceImp.readById(id);
 
-		if (recovered.isPresent()) {		
-			
-			permissionServicesImp.deleteById(id);
+		if (recovered.isPresent()) {
+			permissionServiceImp.deleteById(id);
 			return ResponseEntity.status(HttpStatus.ACCEPTED)
-					.body("permission con id: " + id + ", eliminada correctamente.");
+					.body("permiso con id: " + id + ", eliminada correctamente.");
 		} else
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body("no se ha encontrado permission con el id: " + id + ".");
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("no se ha encontrado permiso con id: " + id + ".");
 	}
 }

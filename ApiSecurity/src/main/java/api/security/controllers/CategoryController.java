@@ -1,8 +1,7 @@
 package api.security.controllers;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,125 +25,114 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/categories")
 public class CategoryController {
 
-
 	@Autowired
-	private CategoryServiceImp categoryServicesImp;
-	
-	private Set<CategoryEntity> categories;
-	
-	
+	private CategoryServiceImp categoryServiceImp;
+
 	@PostMapping("/create")
-	public ResponseEntity<?> create(@Valid @RequestBody CategoryDTO categoryDTO, BindingResult result) {	
-	
+	public ResponseEntity<?> create(@Valid @RequestBody CategoryDTO categoryDTO, BindingResult result) {
+
 		if (result.hasErrors())
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("ha ocurrido un error!");
+
+		boolean repeated = false;
+		boolean emptyFields = categoryDTO.getName().isBlank() | categoryDTO.getDescription().isBlank();
+
+		if (emptyFields)
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("faltan datos.");
+		else
+			repeated = categoryServiceImp.readAll().stream()
+					.anyMatch(c -> c.getName().equalsIgnoreCase(categoryDTO.getName()));
+
+		if (repeated)
 			return ResponseEntity.status(HttpStatus.CONFLICT)
-					.body("ha ocurrido un error!");
-			 
-			 categories = categoryServicesImp.readAll().stream().map(c -> {
-			        c.setName(c.getName().toLowerCase());
-			        c.setName(c.getDescription().toLowerCase());
-			        return c;
-			    }).collect(Collectors.toSet());
-			 
-			 if(categoryDTO == null | categoryDTO.getName().isEmpty() | categoryDTO.getDescription().isEmpty()) {
-					
-					return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("faltan datos.");					
-				}
-			 else if(categories.stream().anyMatch((c) -> categoryDTO.getName().equals(c))){
-				 
-				 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(categoryDTO+", ya existe esta categoria");
-			 }				 
-			 else{
-	            categoryServicesImp.create(new CategoryEntity(categoryDTO.getName(), categoryDTO.getDescription()));
-				return ResponseEntity.status(HttpStatus.CREATED)
-						.body(categoryDTO.getName()+ ", creada sastifactoriamente.");
-			 }      	
+					.body(categoryDTO.getName() + " ya existe, pruebe con otra categoria.");
+		else {
+			categoryServiceImp.create(new CategoryEntity(categoryDTO.getName(), categoryDTO.getDescription()));
+			return ResponseEntity.status(HttpStatus.CREATED).body(categoryDTO.getName() + " creada correctamente.");
+		}
 	}
 	
 	@GetMapping("/read/all")
 	public ResponseEntity<?> readAll() {
-		
-		 
-		 categories = categoryServicesImp.readAll().stream().map(c -> {
-		        c.setName(c.getName().toLowerCase());
-		        c.setDescription(c.getDescription().toLowerCase());
-		        return c;
-		    }).collect(Collectors.toSet());
-		
-		if (!categories.isEmpty()) {
-			
-			categories.stream().map(c -> new CategoryDTO(c.getId(), c.getName(), c.getDescription()));
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body(categories);
-		}
 
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("no se han encontrado categories.");
+		List<CategoryDTO> categories = categoryServiceImp.readAll().stream()
+				.map(c -> new CategoryDTO(c.getId(), c.getName(), c.getDescription())).toList();
+
+		if (categories.size() > 0)
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(categories);
+
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("no se han encontrado categorias.");
 	}
 
-	
 	@GetMapping("/read/id/{id}")
 	public ResponseEntity<?> readById(@PathVariable Long id) {
 
-		Optional<CategoryEntity> recovered = categoryServicesImp.readById(id);
+		Optional<CategoryEntity> recovered = categoryServiceImp.readById(id);
 
-		if (recovered.isPresent()) {
-			CategoryDTO CategoryDTO = new CategoryDTO(id, recovered.get().getName(), recovered.get().getDescription());
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body(CategoryDTO);
-		}
+		if (recovered.isPresent())
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(recovered.get());
 
-		return ResponseEntity.status(HttpStatus.NOT_FOUND)
-				.body("no se ha encontrado categoria con el id: " + id + ".");
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("no se ha encontrado categoria con id: " + id + ".");
 	}
-	
+
 	@GetMapping("/read/name/{name}")
 	public ResponseEntity<?> readByName(@PathVariable String name) {
 
-		Optional<CategoryEntity> recovered = categoryServicesImp.readByName(name);
+		Optional<CategoryEntity> recovered = categoryServiceImp.readByName(name);
 
-		if (recovered.isPresent()) {
-			CategoryDTO categoryDTO = new CategoryDTO(recovered.get().getId(), recovered.get().getName(), recovered.get().getDescription());
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body(categoryDTO);
-		}
+		if (recovered.isPresent())
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(recovered.get());
 
 		return ResponseEntity.status(HttpStatus.NOT_FOUND)
-				.body("no se han encontrado category con el name: " + name + ".");
-	}
+				.body("no se ha encontrado categoria con nombre: " + name + ".");
+	}	
 
 	@PutMapping("/update/{id}")
-	public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody CategoryDTO CategoryDTO, BindingResult result) {
-		
+	public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody CategoryDTO categoryDTO,
+			BindingResult result) {
+
 		if (result.hasErrors())
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("ha ocurrido un error!");
+
+		Optional<CategoryEntity> recovered = categoryServiceImp.readById(id);
+		boolean emptyFields = categoryDTO.getName().isBlank() | categoryDTO.getDescription().isBlank();
+		boolean repeated = false;
+
+		if (emptyFields)
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("faltan datos.");
+		else if (recovered.isPresent()) {
+			repeated = categoryServiceImp.readAll().stream()
+					.anyMatch(c -> c != recovered.get() & c.getName().equalsIgnoreCase(categoryDTO.getName()));
+		}else
 			return ResponseEntity.status(HttpStatus.CONFLICT)
-					.body("ha ocurrido un error!");
+					.body("no se ha encontrado categoria con id: " + id + ".");
 
-		Optional<CategoryEntity> recovered = categoryServicesImp.readById(id);
+		if (repeated)
+			return ResponseEntity.status(HttpStatus.CONFLICT)
+					.body(categoryDTO.getName() + " ya existe, pruebe con otra categoria.");
+		else {
 
-		if (!recovered.isPresent() | CategoryDTO == null) {
+			CategoryEntity category = recovered.get();
+			category.setName(categoryDTO.getName());
+			category.setDescription(categoryDTO.getDescription());
 
-			if (CategoryDTO == null)
-				return ResponseEntity.status(HttpStatus.ACCEPTED).body(("faltan datos."));
-			else
-				return ResponseEntity.status(HttpStatus.ACCEPTED).body(("no existe category con id: " + id));
+			categoryServiceImp.create(category);
+			return ResponseEntity.status(HttpStatus.CREATED)
+					.body(categoryDTO.getName() + " actualizada correctamente.");
 		}
-			
-			recovered.get().setName(CategoryDTO.getName());
-			recovered.get().setDescription(CategoryDTO.getDescription());
-			categoryServicesImp.update(recovered.get());			
-			return ResponseEntity.status(HttpStatus.CREATED).body(recovered.get().getName() + ", actualizada sastifactoriamente.");
 	}
-		
+
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<?> deleteById(@PathVariable Long id) {
 
-		Optional<CategoryEntity> recovered = categoryServicesImp.readById(id);		
+		Optional<CategoryEntity> recovered = categoryServiceImp.readById(id);
 
-		if (recovered.isPresent()) {		
-			
-			categoryServicesImp.deleteById(id);
+		if (recovered.isPresent()) {
+			categoryServiceImp.deleteById(id);
 			return ResponseEntity.status(HttpStatus.ACCEPTED)
-					.body("category con id: " + id + ", eliminada correctamente.");
+					.body("categoria con id: " + id + ", eliminada correctamente.");
 		} else
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body("no se ha encontrado category con el id: " + id + ".");
-	}
-	
+			return ResponseEntity.status(HttpStatus.CONFLICT)
+					.body("no se ha encontrado categoria con id: " + id + ".");
+	}	
 }

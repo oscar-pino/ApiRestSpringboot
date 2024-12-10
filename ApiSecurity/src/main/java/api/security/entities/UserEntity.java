@@ -70,12 +70,17 @@ public class UserEntity {
 		this.id = id;
 	}	
 	
+public UserEntity(Long id, String username, String password, Set<RoleEntity> roles, boolean isEnabled, boolean accountNoExpired, boolean accountNoLocked, boolean credentialNoExpired) {
+		
+		this(id, username, password, roles);
+		this.isEnabled = isEnabled;
+		this.accountNoLocked = accountNoLocked;
+		this.accountNoExpired = accountNoExpired;
+		this.credentialNoExpired = credentialNoExpired;
+	}	
+	
 	public Long getId() {
 		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getUsername() {

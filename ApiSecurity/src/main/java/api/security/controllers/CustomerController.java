@@ -2,7 +2,6 @@ package api.security.controllers;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,9 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import api.security.dto.CustomerDTO;
-import api.security.dto.UserDTO;
 import api.security.entities.CustomerEntity;
-import api.security.entities.UserEntity;
 import api.security.services.CustomerServiceImp;
 import jakarta.validation.Valid;
 
@@ -34,42 +31,55 @@ public class CustomerController {
 	@PostMapping("/create")
 	public ResponseEntity<?> create(@Valid @RequestBody CustomerDTO customerDTO, BindingResult result) {
 
-		Optional<CustomerEntity> recovered = customerServiceImp.readByEmail(customerDTO.getEmail());
-		
 		if (result.hasErrors())
-			return ResponseEntity.status(HttpStatus.CONFLICT)
-					.body("ha ocurrido un error");		
-		
-		if(customerDTO.getFirstName().isBlank() | customerDTO.getLastName().isBlank() | customerDTO.getNationality() == null 
-				| customerDTO.getAddress().isBlank() | customerDTO.getEmail().isBlank() | customerDTO.getPhone().isBlank())
-			return ResponseEntity.status(HttpStatus.CONFLICT).body("datos vacios!");
-		
-		else if(recovered.isPresent() | customerServiceImp.readByPhone(customerDTO.getPhone()).isPresent()) {
-			
-			if(recovered.isPresent())
-				return ResponseEntity.status(HttpStatus.CONFLICT).body(customerDTO.getEmail()+" ya existe, pruebe con otro email!");
-			else
-				return ResponseEntity.status(HttpStatus.CONFLICT).body(customerDTO.getPhone()+" ya existe, pruebe con otro phone!");
-				
-		}
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("ha ocurrido un error!");
 
-			customerServiceImp.create(new CustomerEntity(customerDTO.getFirstName(), customerDTO.getLastName(), customerDTO.getNationality(),
+		boolean[] repeated = new boolean[2]; // 0: email, 1: phone
+		boolean emptyFields = customerDTO.getFirstName().isBlank() | customerDTO.getLastName().isBlank() | customerDTO.getAddress().isBlank() | 
+				customerDTO.getNationality() == null | customerDTO.getPhone().isBlank() | customerDTO.getEmail().isBlank();
+
+		if (emptyFields)
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("faltan datos.");
+		else {
+			repeated[0] = customerServiceImp.readAll().stream().anyMatch(c -> c.getEmail().equalsIgnoreCase(customerDTO.getEmail()));
+			repeated[1] = customerServiceImp.readAll().stream().anyMatch(c -> c.getPhone().equalsIgnoreCase(customerDTO.getPhone()));
+		}
+		
+		if (repeated[0] | repeated[1]) {
+			if (repeated[0])
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(customerDTO.getEmail()+" ya existe, pruebe con otro email.");
+			else
+				return ResponseEntity.status(HttpStatus.CONFLICT).body(customerDTO.getPhone()+" ya existe, pruebe con otro teléfono.");
+		}else {
+			customerServiceImp.create(new CustomerEntity(customerDTO.getFirstName(), customerDTO.getLastName(), customerDTO.getNationality(), 
 					customerDTO.getAddress(), customerDTO.getEmail(), customerDTO.getPhone()));
-				return ResponseEntity.status(HttpStatus.CREATED)
-						.body(customerDTO.getFirstName() + ", creado sastifactoriamente.");	
+			return ResponseEntity.status(HttpStatus.CREATED)
+					.body(customerDTO.getFirstName() + " creado correctamente.");
+		}
 	}
-	
+
 	@GetMapping("/read/all")
 	public ResponseEntity<?> readAll() {
 
 		List<CustomerDTO> customers = customerServiceImp.readAll().stream()
-				.map((c) -> new CustomerDTO(c.getFirstName(), c.getLastName(), c.getNationality(),
-						c.getAddress(), c.getEmail(), c.getPhone())).toList();
+				.map(c -> new CustomerDTO(c.getFirstName(), c.getLastName(), c.getNationality(), c.getAddress(), c.getEmail(), c.getPhone())).toList();
 
 		if (customers.size() > 0)
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(customers);
 
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("no se han encontrado customers.");
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("no se han encontrado clientes.");
+	}
+	
+	@GetMapping("/read/all/nationality_name/{name}")
+	public ResponseEntity<?> readAllByNationalityName(String name) {
+
+		List<CustomerDTO> customers = customerServiceImp.readAllByNationalityName(name).stream()
+				.map(c -> new CustomerDTO(c.getFirstName(), c.getLastName(), c.getNationality(), c.getAddress(), c.getEmail(), c.getPhone())).toList();
+
+		if (customers.size() > 0)
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(customers);
+
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("no se han encontrado clientes con nombre de nacionalidad: "+name+".");
 	}
 
 	@GetMapping("/read/id/{id}")
@@ -80,8 +90,7 @@ public class CustomerController {
 		if (recovered.isPresent())
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(recovered.get());
 
-		return ResponseEntity.status(HttpStatus.NOT_FOUND)
-				.body("no se ha encontrado customer con id: " + id + ".");
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("no se ha encontrado cliente con id: " + id + ".");
 	}
 
 	@GetMapping("/read/email/{email}")
@@ -92,8 +101,7 @@ public class CustomerController {
 		if (recovered.isPresent())
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(recovered.get());
 
-		return ResponseEntity.status(HttpStatus.NOT_FOUND)
-				.body("no se ha encontrado customer con email: " + email + ".");
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("no se ha encontrado cliente con email: " + email + ".");
 	}
 	
 	@GetMapping("/read/phone/{phone}")
@@ -104,46 +112,49 @@ public class CustomerController {
 		if (recovered.isPresent())
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(recovered.get());
 
-		return ResponseEntity.status(HttpStatus.NOT_FOUND)
-				.body("no se ha encontrado customer con phone: " + phone + ".");
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("no se ha encontrado cliente con phone: " + phone + ".");
 	}
 
-	
-
 	@PutMapping("/update/{id}")
-	public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody CustomerDTO customerDTO, BindingResult result) {
-		
+	public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody CustomerDTO customerDTO,
+			BindingResult result) {
+
 		if (result.hasErrors())
-			return ResponseEntity.status(HttpStatus.CONFLICT)
-					.body("ha ocurrido un error");
-		
-		Optional<CustomerEntity> recovered = customerServiceImp.readByEmail(customerDTO.getEmail());
-		
-		if(customerDTO.getFirstName().isBlank() | customerDTO.getLastName().isBlank() | customerDTO.getNationality() == null 
-				| customerDTO.getAddress().isBlank() | customerDTO.getEmail().isBlank() | customerDTO.getPhone().isBlank())
-			return ResponseEntity.status(HttpStatus.CONFLICT).body("datos vacios!");
-		
-		else if(recovered.isPresent() | customerServiceImp.readByPhone(customerDTO.getPhone()).isPresent()) {
-			
-			if(recovered.isPresent())
-				return ResponseEntity.status(HttpStatus.CONFLICT).body(customerDTO.getEmail()+" ya existe, pruebe con otro email!");
-			else
-				return ResponseEntity.status(HttpStatus.CONFLICT).body(customerDTO.getPhone()+" ya existe, pruebe con otro phone!");
-				
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("ha ocurrido un error!");
+
+		boolean[] repeated = new boolean[2]; // 0: email, 1: phone
+		boolean emptyFields = customerDTO.getFirstName().isBlank() | customerDTO.getLastName().isBlank() | customerDTO.getAddress().isBlank() | 
+				customerDTO.getNationality() == null | customerDTO.getPhone().isBlank() | customerDTO.getEmail().isBlank();
+		Optional<CustomerEntity> recovered = customerServiceImp.readById(id);
+
+		if (emptyFields)
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("faltan datos.");
+		if(!recovered.isPresent())
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("no se ha encontrado cliente con id: " + id + ".");
+		else {
+			repeated[0] = customerServiceImp.readAll().stream().anyMatch(c -> c.getEmail().equalsIgnoreCase(customerDTO.getEmail()));
+			repeated[1] = customerServiceImp.readAll().stream().anyMatch(c -> c.getPhone().equalsIgnoreCase(customerDTO.getPhone()));
 		}
 		
-		CustomerEntity customer = recovered.get();
-		customer.setFirstName(customerDTO.getFirstName());
-		customer.setLastName(customerDTO.getLastName());
-		customer.setNationality(customerDTO.getNationality());
-		customer.setAddress(customerDTO.getAddress());
-		customer.setEmail(customerDTO.getEmail());
-		customer.setPhone(customerDTO.getPhone());
-		
-		customerServiceImp.update(customer);
-		
-		return ResponseEntity.status(HttpStatus.CREATED)
-				.body(customerDTO.getFirstName() + ", actualizada sastifactoriamente.");		
+		if (repeated[0] | repeated[1]) {
+			if (repeated[0])
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(customerDTO.getEmail()+" ya existe, pruebe con otro email.");
+			else
+				return ResponseEntity.status(HttpStatus.CONFLICT).body(customerDTO.getPhone()+" ya existe, pruebe con otro teléfono.");
+		}else {
+			
+			CustomerEntity customer = recovered.get();
+			customer.setFirstName(customerDTO.getFirstName());
+			customer.setLastName(customerDTO.getLastName());
+			customer.setNationality(customerDTO.getNationality());
+			customer.setAddress(customerDTO.getAddress());
+			customer.setEmail(customerDTO.getEmail());
+			customer.setPhone(customerDTO.getPhone());
+			
+			customerServiceImp.update(customer);
+			return ResponseEntity.status(HttpStatus.CREATED)
+					.body(customerDTO.getFirstName() + ", actualizado correctamente.");
+		}
 	}
 
 	@DeleteMapping("/delete/{id}")
@@ -154,10 +165,8 @@ public class CustomerController {
 		if (recovered.isPresent()) {
 			customerServiceImp.deleteById(id);
 			return ResponseEntity.status(HttpStatus.ACCEPTED)
-					.body("customer con id: " + id + ", eliminado correctamente.");
+					.body("user con id: " + id + ", eliminado correctamente.");
 		} else
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body("no se ha encontrado customer con id: " + id + ".");
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("no se ha encontrado user con id: " + id + ".");
 	}
-
 }

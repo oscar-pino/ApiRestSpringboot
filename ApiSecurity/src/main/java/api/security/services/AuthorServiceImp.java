@@ -57,5 +57,4 @@ public class AuthorServiceImp implements IDAO<AuthorEntity> {
 		authorRepository.save(authorEntity);
 		
 	}
-
 }

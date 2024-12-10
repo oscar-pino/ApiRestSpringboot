@@ -3,24 +3,26 @@ package api.security.repositories;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import api.security.entities.AuthorEntity;
 import api.security.entities.BookEntity;
-import api.security.entities.CategoryEntity;
-import api.security.entities.EditorialEntity;
 
 @Repository
 public interface IBookRepository extends CrudRepository<BookEntity, Long> {
 
-	Optional<BookEntity> findByIsbm(String isbm);
+	Optional<BookEntity> findByIsbm(@Param(value = "isbm") String isbm);
 	
-	Optional<BookEntity> findByTitle(String title);
+	Optional<BookEntity> findByTitle(@Param(value = "title") String title);
 	
-	List<BookEntity> findByEditorial(EditorialEntity editorial);
+	@Query("SELECT b FROM BookEntity b WHERE b.editorial.name = :name")
+	List<BookEntity> findAllByEditorialName(@Param(value = "name") String name);
+	
+	@Query("SELECT b FROM BookEntity b WHERE b.author.firstName = :name ORDER BY b.id")
+	List<BookEntity> findAllByAuthorName(@Param(value = "name") String name);
 
-	List<BookEntity> findByAuthor(AuthorEntity author);
-
-	List<BookEntity> findByCategory(CategoryEntity category);
+	@Query("SELECT b FROM BookEntity b WHERE b.category.name = :name ORDER BY b.id")
+	List<BookEntity> findAllByCategoryName(@Param(value = "name") String name); 
 }

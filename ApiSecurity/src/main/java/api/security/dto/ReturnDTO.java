@@ -13,6 +13,9 @@ public class ReturnDTO {
 	private int daysLate;
 
 	public ReturnDTO() {
+		this.penalty = 0f;
+		this.daysLate = 0;
+		this.returnDate = LocalDate.now().plusDays(10l);
 	}	
 
 	public ReturnDTO(LocalDate returnDate, Float penalty) {

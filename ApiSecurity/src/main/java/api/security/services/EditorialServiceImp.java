@@ -11,52 +11,52 @@ import api.security.repositories.IEditorialRepository;
 
 @Service
 public class EditorialServiceImp implements IDAO<EditorialEntity> {
-	
+
 	@Autowired
 	private IEditorialRepository editorialRepository;
 
 	@Override
 	public void create(EditorialEntity editorialEntity) {
-		
+
 		editorialRepository.save(editorialEntity);
-	}	
+	}
 
 	@Override
 	public List<EditorialEntity> readAll() {
-		
-		return (List<EditorialEntity>)editorialRepository.findAll();
+
+		return (List<EditorialEntity>) editorialRepository.findAll();
 	}
-	
+
 	@Override
 	public Optional<EditorialEntity> readById(Long id) {
-		
+
 		return editorialRepository.findById(id);
 	}
-	
-public Optional<EditorialEntity> readByName(String name) {
-		
+
+	public Optional<EditorialEntity> readByName(String name) {
+
 		return editorialRepository.findByName(name);
 	}
 
-public Optional<EditorialEntity> readByWebSite(String webSite) {
-	
-	return editorialRepository.findByWebSite(webSite);
-}
+	public Optional<EditorialEntity> readByWebSite(String webSite) {
 
-public Optional<EditorialEntity> readByEmail(String email) {
-	
-	return editorialRepository.findByEmail(email);
-}
-	
+		return editorialRepository.findByWebSite(webSite);
+	}
+
+	public Optional<EditorialEntity> readByEmail(String email) {
+
+		return editorialRepository.findByEmail(email);
+	}
+
 	@Override
 	public void update(EditorialEntity editorialEntity) {
-		
-		editorialRepository.save(editorialEntity);		
+
+		editorialRepository.save(editorialEntity);
 	}
 
 	@Override
 	public void deleteById(Long id) {
-		
-		editorialRepository.deleteById(id);		
+
+		editorialRepository.deleteById(id);
 	}
 }

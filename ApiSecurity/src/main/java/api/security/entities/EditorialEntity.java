@@ -39,11 +39,13 @@ public class EditorialEntity {
 	@Size(max = 30, message = "ingrese 30 caracteres como máximo")
     @Pattern(regexp = "^(https?://)?([\\w-]+\\.)+[\\w-]+(/[-\\w@:%_\\+.~#?&//=]*)?$", 
              message = "el sitio web debe tener un formato válido")
+	@Column(unique = true)
 	private String webSite;
 
 	@NotBlank(message = "el campo no debe ser null o solo contener espacios en blanco")
 	@Size(max = 30, message = "ingrese 30 caracteres como máximo")
 	@Email(message = "el email debe tener un formato válido")
+	@Column(unique = true)
 	private String email;
 
 	@Column(name = "founding_date")

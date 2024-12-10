@@ -26,6 +26,11 @@ public class ReturnServiceImp implements IDAO<ReturnEntity> {
 		
 		return (List<ReturnEntity>)returnRepository.findAll();
 	}
+	
+	public List<ReturnEntity> readAllByReturnDate(String returnDate){
+		
+		return (List<ReturnEntity>) returnRepository.findAllByReturnDate(returnDate);
+	}
 
 	@Override
 	public Optional<ReturnEntity> readById(Long id) {

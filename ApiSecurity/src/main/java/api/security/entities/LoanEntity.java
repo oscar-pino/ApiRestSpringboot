@@ -3,7 +3,9 @@ package api.security.entities;
 import java.time.LocalDate;
 import java.util.Set;
 
-import jakarta.persistence.CascadeType;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -15,6 +17,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.PastOrPresent;
 
 @Entity
 @Table(name = "loans")
@@ -32,13 +35,18 @@ public class LoanEntity {
 	@JoinColumn(name = "customer_id", nullable = false)
 	private CustomerEntity customer;
 
+	@PastOrPresent(message = "la fecha ingresada, no puede ser para futuro")
+	@Column(nullable = false)
+	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate loanDate;
-	
+
 	@OneToOne(targetEntity = ReturnEntity.class)
 	@JoinColumn(name = "return_id", nullable = false)
 	private ReturnEntity returns;
 
 	public LoanEntity() {
+
+		this.loanDate = LocalDate.now();
 	}
 
 	public LoanEntity(Set<BookEntity> books, CustomerEntity customer, LocalDate loanDate) {
@@ -46,15 +54,16 @@ public class LoanEntity {
 		this.customer = customer;
 		this.loanDate = loanDate;
 	}
-	
+
 	public LoanEntity(Set<BookEntity> books, CustomerEntity customer, LocalDate loanDate, ReturnEntity returns) {
 		this(books, customer, loanDate);
-		this.returns=returns;
+		this.returns = returns;
 	}
-	
-	public LoanEntity(Long id, Set<BookEntity> books, CustomerEntity customer, LocalDate loanDate, ReturnEntity returns) {
+
+	public LoanEntity(Long id, Set<BookEntity> books, CustomerEntity customer, LocalDate loanDate,
+			ReturnEntity returns) {
 		this(books, customer, loanDate, returns);
-		this.id=id;
+		this.id = id;
 	}
 
 	public LocalDate getLoanDate() {

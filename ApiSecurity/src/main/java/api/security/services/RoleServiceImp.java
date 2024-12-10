@@ -27,9 +27,9 @@ public class RoleServiceImp implements IDAO<RoleEntity> {
 		return (List<RoleEntity>) roleRepository.findAll();
 	}
 	
-	public List<RoleEntity> readAllByName(String name) {
+	public List<RoleEntity> readAllRoleByName(String name) {
 
-		return (List<RoleEntity>) roleRepository.findAllByName(name);
+		return (List<RoleEntity>) roleRepository.findAllRoleByName(name);
 	}
 	
 	@Override

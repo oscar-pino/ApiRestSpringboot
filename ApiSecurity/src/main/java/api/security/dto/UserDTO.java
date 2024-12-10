@@ -6,28 +6,28 @@ import api.security.entities.RoleEntity;
 
 public class UserDTO {
 
-    private Long id;
+	private Long id;
 
-    private String username;
+	private String username;
 
-    private String password;
+	private String password;
 
-    private boolean isEnabled;
+	private boolean isEnabled;
 
-    private boolean accountNoExpired;
+	private boolean accountNoExpired;
 
-    private boolean accountNoLocked;
+	private boolean accountNoLocked;
 
-    private boolean credentialNoExpired;
-   
-    private Set<RoleEntity> roles;
+	private boolean credentialNoExpired;
+
+	private Set<RoleEntity> roles;
 
 	public UserDTO() {
-		
+
 	}
-	
+
 	public UserDTO(String username, String password, Set<RoleEntity> roles) {
-	
+
 		this.username = username;
 		this.password = password;
 		this.isEnabled = true;
@@ -36,19 +36,25 @@ public class UserDTO {
 		this.credentialNoExpired = true;
 		this.roles = roles;
 	}
-	
+
 	public UserDTO(Long id, String username, String password, Set<RoleEntity> roles) {
-		
+
 		this(username, password, roles);
 		this.id = id;
-	}	
-	
-	public Long getId() {
-		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public UserDTO(Long id, String username, String password, Set<RoleEntity> roles, boolean isEnabled,
+			boolean accountNoExpired, boolean accountNoLocked, boolean credentialNoExpired) {
+
+		this(id, username, password, roles);
+		this.isEnabled = isEnabled;
+		this.accountNoLocked = accountNoLocked;
+		this.accountNoExpired = accountNoExpired;
+		this.credentialNoExpired = credentialNoExpired;
+	}
+
+	public Long getId() {
+		return id;
 	}
 
 	public String getUsername() {
@@ -112,5 +118,5 @@ public class UserDTO {
 		return "UserDTO [id=" + id + ", username=" + username + ", password=" + password + ", isEnabled=" + isEnabled
 				+ ", accountNoExpired=" + accountNoExpired + ", accountNoLocked=" + accountNoLocked
 				+ ", credentialNoExpired=" + credentialNoExpired + ", roles=" + roles + "]";
-	}	
+	}
 }

@@ -24,10 +24,6 @@ public class PermissionDTO {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public PermissionEnum getPermissionEnum() {
 		return permissionEnum;
 	}

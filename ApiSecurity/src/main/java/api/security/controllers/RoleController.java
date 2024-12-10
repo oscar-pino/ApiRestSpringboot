@@ -1,6 +1,8 @@
 package api.security.controllers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,111 +28,124 @@ import jakarta.validation.Valid;
 public class RoleController {
 	
 	@Autowired
-	private RoleServiceImp roleServicesImp;
-	
+	private RoleServiceImp roleServiceImp;
+
 	@PostMapping("/create")
-	public ResponseEntity<?> create(@Valid @RequestBody RoleDTO roleDTO, BindingResult result) {		
+	public ResponseEntity<?> create(@Valid @RequestBody RoleDTO roleDTO, BindingResult result) {
 
 		if (result.hasErrors())
-			return ResponseEntity.status(HttpStatus.CONFLICT)
-					.body("ha ocurrido un error!");
-		
-		if (roleDTO == null | roleDTO.getPermissionList().isEmpty()) 
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("permission no puede ser vacio");
-		else		
-		{
-			
-			roleServicesImp.create(new RoleEntity(roleDTO.getRoleEnum(), roleDTO.getPermissionList()));
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("ha ocurrido un error!");
+
+		boolean isEnum = false;
+		boolean emptyFields = roleDTO.getRoleEnum() == null | roleDTO.getPermissionList() == null;
+
+		if (emptyFields)
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("faltan datos.");
+		else
+			isEnum = roleServiceImp.readAll().stream().anyMatch(r -> r.getRoleEnum().name().equalsIgnoreCase(roleDTO.getRoleEnum().name()));
+
+		if (!isEnum)
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("debe ingresar un role valido");
+		else {
+			roleServiceImp.create(new RoleEntity(roleDTO.getRoleEnum(), roleDTO.getPermissionList()));
 			return ResponseEntity.status(HttpStatus.CREATED)
-					.body(roleDTO.getRoleEnum().name() + ", creado sastifactoriamente.");
-			
-		} 
+					.body(roleDTO.getRoleEnum().name() + " creado correctamente.");
+		}
 	}
-	
+
 	@GetMapping("/read/all")
 	public ResponseEntity<?> readAll() {
 
-		List<RoleEntity> roles = roleServicesImp.readAll();
-				
-		if (!roles.isEmpty()) {
-			
-			roles.stream().map(r -> new RoleDTO(r.getRoleEnum())).toList();
+		List<RoleDTO> roles = roleServiceImp.readAll().stream()
+				.map(r -> new RoleDTO(r.getId(), r.getRoleEnum(), r.getPermissionList())).toList();
+
+		if (roles.size() > 0)
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(roles);
-		}
 
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("no se han encontrado roles.");
 	}
-		
+
 	@GetMapping("/read/id/{id}")
 	public ResponseEntity<?> readById(@PathVariable Long id) {
-	
-		Optional<RoleEntity> recovered = roleServicesImp.readById(id);
 
-		if (recovered.isPresent()) {			
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body(recovered);
-		}
-		else
-		return ResponseEntity.status(HttpStatus.NOT_FOUND)
-				.body("no se ha encontrado roles con el id: " + id + ".");
+		Optional<RoleEntity> recovered = roleServiceImp.readById(id);
+
+		if (recovered.isPresent())
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(recovered.get());
+
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("no se ha encontrado role con id: " + id + ".");
 	}
-		
+
 	@GetMapping("/read/all/name/{name}")
-	public ResponseEntity<?> readAllName(@PathVariable String name) {
+	public ResponseEntity<?> readAllByName(@PathVariable String name) {
 
-		List<RoleEntity> roles = roleServicesImp.readAllByName(name);
-				
-		if (!roles.isEmpty()) {
-			
-			roles.stream().map(r -> new RoleDTO(r.getRoleEnum())).toList();
+		List<RoleDTO> roles = roleServiceImp.readAllRoleByName(name).stream()
+				.map(r -> new RoleDTO(r.getId(), r.getRoleEnum(), r.getPermissionList())).toList();
+
+		if (roles.size() > 0)
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(roles);
-		}
 
-		return ResponseEntity.status(HttpStatus.NOT_FOUND)
-				.body("no se ha encontrado role con el name: " + name + ".");
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("no se han encontrado roles con el nombre "+name+".");
+	}
+
+	@GetMapping("/read/unique")
+	public ResponseEntity<?> readUnique() {
+
+		Map<Long,String> roles = new HashMap<Long, String>();
+
+		roleServiceImp.readAll().forEach(r -> {
+			if (!roles.containsValue(r.getRoleEnum().name()))
+				roles.put(r.getId(), r.getRoleEnum().name()); // setea el id de la primera ocurrencia en el Map
+		});
+
+		if (roles.size() > 0)
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(roles);
+
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("no se han encontrado roles.");
 	}
 
 	@PutMapping("/update/{id}")
-	public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody RoleDTO roleDTO, BindingResult result) {
+	public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody RoleDTO roleDTO,
+			BindingResult result) {
 
 		if (result.hasErrors())
-			return ResponseEntity.status(HttpStatus.CONFLICT)
-					.body("ha ocurrido un error!");
-		
-		Optional<RoleEntity> recovered = roleServicesImp.readById(id);
-	
-		if (roleDTO.getRoleEnum() == null | roleDTO.getPermissionList().isEmpty()) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("ha ocurrido un error!");
 
+		boolean isEnum = false;
+		boolean emptyFields = roleDTO.getRoleEnum() == null | roleDTO.getPermissionList() == null;
+		Optional<RoleEntity> recovered = roleServiceImp.readById(id);
+
+		if (emptyFields)
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("faltan datos.");
+		else if (!recovered.isPresent())
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("no se han encontrado role con id: "+id+".");
+		else
+			isEnum = roleServiceImp.readAll().stream().anyMatch(r -> r.getRoleEnum().name().equalsIgnoreCase(roleDTO.getRoleEnum().name()));
 
-		} 
-		else if(recovered.isPresent()) {
+		if (!isEnum)
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("debe ingresar un role valido");
+		else {
+
+			RoleEntity role = recovered.get();
+			role.setRoleEnum(roleDTO.getRoleEnum());
+			role.setPermissionList(roleDTO.getPermissionList());
+			roleServiceImp.create(role);
 			
-				RoleEntity roleEntity = recovered.get();
-				roleEntity.setRoleEnum(roleDTO.getRoleEnum());
-				roleEntity.setPermissionList(roleDTO.getPermissionList());
-
-				roleServicesImp.update(roleEntity);
-
-				return ResponseEntity.status(HttpStatus.CONFLICT).body("datos actualizados, correctamente.");
-			
-
-		} else
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body("no se ha encontrado role con el id: " + id + ".");
+			return ResponseEntity.status(HttpStatus.CREATED)
+					.body(roleDTO.getRoleEnum().name() + " actualizado correctamente.");
+		}
 	}
-	
+
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<?> deleteById(@PathVariable Long id) {
 
-		Optional<RoleEntity> recovered = roleServicesImp.readById(id);
+		Optional<RoleEntity> recovered = roleServiceImp.readById(id);
 
 		if (recovered.isPresent()) {
-			roleServicesImp.deleteById(id);
+			roleServiceImp.deleteById(id);
 			return ResponseEntity.status(HttpStatus.ACCEPTED)
 					.body("role con id: " + id + ", eliminada correctamente.");
 		} else
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body("no se ha encontrado role con el id: " + id + ".");
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("no se ha encontrado role con id: " + id + ".");
 	}
-
 }

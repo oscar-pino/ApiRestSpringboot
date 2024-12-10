@@ -25,6 +25,7 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/returns")
 public class ReturnController {
 
+
 	@Autowired
 	private ReturnServiceImp returnServiceImp;
 
@@ -34,24 +35,40 @@ public class ReturnController {
 		if (result.hasErrors())
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("ha ocurrido un error!");
 
-		if (returnDTO.getReturnDate() == null | returnDTO.getPenalty() < 0.0f | returnDTO.getPenalty() < 1 | returnDTO.getDaysLate() < 1)
-			return ResponseEntity.status(HttpStatus.CONFLICT).body("corregir datos ingresados!");
-		
-		
-		returnServiceImp.create(new ReturnEntity(null, 0f, 0));
-		return ResponseEntity.status(HttpStatus.CREATED).body("return creado sastifactoriamente");		
+		if (returnDTO.getReturnDate() == null | returnDTO.getDaysLate() < 0 | returnDTO.getPenalty() < 0) {
+			if(returnDTO.getReturnDate() == null)
+				return ResponseEntity.status(HttpStatus.CONFLICT).body("la fecha no puede ser nula!");
+			else
+				return ResponseEntity.status(HttpStatus.CONFLICT).body("el valor ingresado no puede ser nulo!");
+		}
+		else {
+			returnServiceImp.create(new ReturnEntity(returnDTO.getReturnDate(), returnDTO.getPenalty(), returnDTO.getDaysLate()));
+			return ResponseEntity.status(HttpStatus.CREATED).body(returnDTO.getReturnDate() + " creada correctamente.");
+		}
 	}
 	
 	@GetMapping("/read/all")
 	public ResponseEntity<?> readAll() {
 
 		List<ReturnDTO> returns = returnServiceImp.readAll().stream()
-				.map((r) -> new ReturnDTO(r.getId(), r.getReturnDate(), r.getPenalty(), r.getDaysLate())).toList();
+				.map(r -> new ReturnDTO(r.getId(), r.getReturnDate(), r.getPenalty(), r.getDaysLate())).toList();
 
 		if (returns.size() > 0)
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(returns);
 
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("no se han encontrado returns.");
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("no se han encontrado devoluciones.");
+	}
+	
+	@GetMapping("/read/all/return_date/{date}")
+	public ResponseEntity<?> readAllByReturnDate(@PathVariable String date) {
+
+		List<ReturnDTO> returns = returnServiceImp.readAllByReturnDate(date).stream()
+				.map(r -> new ReturnDTO(r.getId(), r.getReturnDate(), r.getPenalty(), r.getDaysLate())).toList();
+
+		if (returns.size() > 0)
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(returns);
+
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("no se han encontrado devoluciones con la fecha ingresada!");
 	}
 
 	@GetMapping("/read/id/{id}")
@@ -62,33 +79,37 @@ public class ReturnController {
 		if (recovered.isPresent())
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(recovered.get());
 
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("no se ha encontrado return con id: " + id + ".");
-	}	
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("no se ha encontrado devolucion con id: " + id + ".");
+	}
 
 	@PutMapping("/update/{id}")
 	public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody ReturnDTO returnDTO,
-			BindingResult result) {		
+			BindingResult result) {
 
 		if (result.hasErrors())
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("ha ocurrido un error!");
 		
 		Optional<ReturnEntity> recovered = returnServiceImp.readById(id);
-
-		if (returnDTO.getReturnDate() == null | returnDTO.getPenalty() < 0.0f | returnDTO.getPenalty() < 1 | returnDTO.getDaysLate() < 1)
-			return ResponseEntity.status(HttpStatus.CONFLICT).body("corregir datos ingresados!");
 		
 		if(!recovered.isPresent())
-			return ResponseEntity.status(HttpStatus.CONFLICT).body("no se ha encontrado return con el id: "+id+"!");
-		else {
-			ReturnEntity returned = recovered.get();
-			returned.setReturnDate(returnDTO.getReturnDate());
-			returned.setPenalty(returnDTO.getPenalty());
-			returned.setDaysLate(returnDTO.getDaysLate());
-			
-			returnServiceImp.create(new ReturnEntity(null, 0f, 0));
-			return ResponseEntity.status(HttpStatus.OK).body("return con id: "+id+" actualizada correctamente");	
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("no se ha encontrado devolucion con id: " + id + ".");
+		else if (returnDTO.getReturnDate() == null | returnDTO.getDaysLate() < 0 | returnDTO.getPenalty() < 0) {
+			if(returnDTO.getReturnDate() == null)
+				return ResponseEntity.status(HttpStatus.CONFLICT).body("la fecha no puede ser nula!");
+			else
+				return ResponseEntity.status(HttpStatus.CONFLICT).body("el valor ingresado no puede ser nulo!");
 		}
-		
+		else {
+
+			ReturnEntity devolucion = recovered.get();
+			devolucion.setReturnDate(returnDTO.getReturnDate());
+			devolucion.setPenalty(returnDTO.getPenalty());
+			devolucion.setDaysLate(returnDTO.getDaysLate());
+
+			returnServiceImp.create(devolucion);
+			return ResponseEntity.status(HttpStatus.CREATED)
+					.body("devolucion con id: "+returnDTO.getId()+", actualizada correctamente.");
+		}
 	}
 
 	@DeleteMapping("/delete/{id}")
@@ -99,9 +120,9 @@ public class ReturnController {
 		if (recovered.isPresent()) {
 			returnServiceImp.deleteById(id);
 			return ResponseEntity.status(HttpStatus.ACCEPTED)
-					.body("return con id: " + id + ", eliminado correctamente.");
+					.body("devolucion con id: " + id + ", eliminada correctamente.");
 		} else
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body("no se ha encontrado return con id: " + id + ".");
+			return ResponseEntity.status(HttpStatus.CONFLICT)
+					.body("no se ha encontrado devolucion con id: " + id + ".");
 	}
 }

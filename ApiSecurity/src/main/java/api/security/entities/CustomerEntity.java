@@ -42,6 +42,7 @@ public class CustomerEntity {
 	
 	@NotBlank(message = "el campo no debe ser null o solo contener espacios en blanco")
 	@Size(min = 8, max = 20, message = "ingrese 8 caracteres como mínimo y 20 como máximo")
+	@Column(unique=true)
 	private String phone;
 
 	public CustomerEntity() {
